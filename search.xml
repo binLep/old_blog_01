@@ -6461,6 +6461,7 @@
 <p><strong>以下是新建过程</strong></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">要创建的规则类型                           --&gt; 端口</span><br><span class="line">此协议应用于 TCP 还是 UDP?                 --&gt; TCP</span><br><span class="line">此规则应用于所有本地端口还是特定的本地端口?  --&gt; 特定本地端口(S): 22</span><br><span class="line">连接符合指定条件时应该进行什么操作?         --&gt; 允许连接</span><br><span class="line">何时应用该规则?                           --&gt; [全选 -- 域；专用；公用]</span><br><span class="line">名称(N):                                  --&gt; 22</span><br><span class="line">描述(可选)(D):                            --&gt; Connection reset by 52.74.223.119 port 22</span><br></pre></td></tr></table></figure>
 
+<p>这也可能是 md 文本名称的最后有一个空格从而导致的错误</p>
 <h3 id="unknown-block-tag"><a href="#unknown-block-tag" class="headerlink" title="unknown block tag"></a>unknown block tag</h3><p>写一道逆向题解时报的错误</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FATAL Something<span class="string">'s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span></span><br><span class="line"><span class="string">Nunjucks Error:  [Line 33, Column 87] unknown block tag: s</span></span><br><span class="line"><span class="string">    =====               Context Dump               =====</span></span><br><span class="line"><span class="string">    === (line number probably different from source) ===</span></span><br></pre></td></tr></table></figure>
 
