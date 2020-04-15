@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="binLep&#39;s Blog">
 <meta property="og:description" content="从零开始的 IO FILE 生活">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-04-15T07:53:38.602Z">
+<meta property="og:updated_time" content="2020-04-15T07:56:19.693Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Pwn 笔记】IO FILE 利用链汇总（待补充）">
 <meta name="twitter:description" content="从零开始的 IO FILE 生活">
@@ -295,7 +295,7 @@
         <p>从零开始的 IO FILE 生活</p>
 <a id="more"></a>
 
-<h2 id="缺省"><a href="#缺省" class="headerlink" title="(缺省)"></a>(缺省)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x7f34f91b13a3 &lt;_IO_file_overflow+163&gt;    or     ah, 8</span><br></pre></td></tr></table></figure>
+<h1 id="缺省"><a href="#缺省" class="headerlink" title="(缺省)"></a>(缺省)</h1><h2 id="缺省-1"><a href="#缺省-1" class="headerlink" title="(缺省)"></a>(缺省)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x7f34f91b13a3 &lt;_IO_file_overflow+163&gt;    or     ah, 8</span><br></pre></td></tr></table></figure>
 
 <h1 id="vtable劫持以及绕过"><a href="#vtable劫持以及绕过" class="headerlink" title="vtable劫持以及绕过"></a>vtable劫持以及绕过</h1><p>这里的伪造一般建议在 bss 段伪造，修改<code>_IO_list_all</code>的值，进行 FSOP</p>
 <p>在<code>__IO_2_1_stdin_ + 0xe0</code>处伪造也行，即<code>_IO_wide_data_0</code>，一般不会对程序有啥影响</p>
@@ -339,7 +339,7 @@
         <p><span>本文标题:</span><a href="">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">binLep</a></p>
         <p><span>发布时间:</span>2020-04-15, 15:53:00</p>
-        <p><span>最后更新:</span>2020-04-15, 15:53:38</p>
+        <p><span>最后更新:</span>2020-04-15, 15:56:19</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="" title="【Pwn 笔记】IO FILE 利用链汇总（待补充）">http://binlep.github.io/2020/04/15/【Pwn 笔记】IO FILE 利用链汇总/</a>
             <span class="copy-path" data-clipboard-text="原文: http://binlep.github.io/2020/04/15/【Pwn 笔记】IO FILE 利用链汇总/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -369,7 +369,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#缺省"><span class="toc-number">1.</span> <span class="toc-text">(缺省)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#vtable劫持以及绕过"><span class="toc-number"></span> <span class="toc-text">vtable劫持以及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#IO-str-jumps"><span class="toc-number">1.</span> <span class="toc-text">_IO_str_jumps</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IO-str-overflow"><span class="toc-number">1.1.</span> <span class="toc-text">_IO_str_overflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO-str-finish"><span class="toc-number">1.2.</span> <span class="toc-text">_IO_str_finish</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IO-wstr-jumps"><span class="toc-number">2.</span> <span class="toc-text">_IO_wstr_jumps</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IO-FILE-表及对应偏移"><span class="toc-number"></span> <span class="toc-text">IO FILE 表及对应偏移</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考资料"><span class="toc-number"></span> <span class="toc-text">参考资料</span></a>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#缺省"><span class="toc-number">1.</span> <span class="toc-text">(缺省)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#缺省-1"><span class="toc-number">1.1.</span> <span class="toc-text">(缺省)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#vtable劫持以及绕过"><span class="toc-number">2.</span> <span class="toc-text">vtable劫持以及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#IO-str-jumps"><span class="toc-number">2.1.</span> <span class="toc-text">_IO_str_jumps</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IO-str-overflow"><span class="toc-number">2.1.1.</span> <span class="toc-text">_IO_str_overflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO-str-finish"><span class="toc-number">2.1.2.</span> <span class="toc-text">_IO_str_finish</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IO-wstr-jumps"><span class="toc-number">2.2.</span> <span class="toc-text">_IO_wstr_jumps</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IO-FILE-表及对应偏移"><span class="toc-number">3.</span> <span class="toc-text">IO FILE 表及对应偏移</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考资料"><span class="toc-number">4.</span> <span class="toc-text">参考资料</span></a></li></ol>
         
     </div>
     <style>
