@@ -1,87 +1,174 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="记录 Pwn 题中的各种骚操作">
+
 <meta name="keywords" content="CTF, Pwn, Sec">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【Pwn 笔记】Glibc 利用中那些偏门的技巧">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2020/04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="记录 Pwn 题中的各种骚操作">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2020-04-15T07:59:38.094Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【Pwn 笔记】Glibc 利用中那些偏门的技巧">
+
 <meta name="twitter:description" content="记录 Pwn 题中的各种骚操作">
 
-<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
-
-
-
-    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+<link rel="apple-touch-icon" href="old_blog_01//apple-touch-icon.png">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+    <link rel="alternate" href="old_blog_01//atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
-    <script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="old_blog_01//favicon.png">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
-<link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【Pwn 笔记】Glibc 利用中那些偏门的技巧 | binLep&#39;s Blog</title>
 
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
 
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,353 +179,707 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/old_blog_01/" class="profilepic">
-            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+        <a href="old_blog_01//" class="profilepic">
+
+            <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="old_blog_01//">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/old_blog_01/" class="profilepic">
-                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+            <a href="old_blog_01//" class="profilepic">
+
+                <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" target="_blank" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【Pwn 笔记】glibc 利用中那些偏门的技巧" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2020-04-15T11:22:00.000Z" itemprop="datePublished">2020-04-15</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【Pwn 笔记】Glibc 利用中那些偏门的技巧
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/Pwn-笔记/">Pwn 笔记</a>
+
     </div>
 
 
+
+
+
         
+
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>记录 Pwn 题中的各种骚操作</p>
+
 <a id="more"></a>
 
+
+
 <h1 id="泄露程序基址"><a href="#泄露程序基址" class="headerlink" title="泄露程序基址"></a>泄露程序基址</h1><h2 id="修改-dl-rtld-libname"><a href="#修改-dl-rtld-libname" class="headerlink" title="修改 _dl_rtld_libname"></a>修改 _dl_rtld_libname</h2><p>通过调试可以看出这是一个结构体，存在于 ld.so 文件里</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p _dl_rtld_libname</span><br><span class="line"><span class="variable">$10</span> = &#123;</span><br><span class="line">  name = 0x55e4fceaf238 <span class="string">"/lib64/ld-linux-x86-64.so.2"</span>, </span><br><span class="line">  next = 0x7fdc9baf4fe0 &lt;newname&gt;, </span><br><span class="line">  dont_free = 0</span><br><span class="line">&#125;</span><br><span class="line">pwndbg&gt; x/6gx &amp;_dl_rtld_libname</span><br><span class="line">0x7fdc9baf5030 &lt;_dl_rtld_libname&gt;:	0x000055e4fceaf238	0x00007fdc9baf4fe0</span><br><span class="line">0x7fdc9baf5040 &lt;_dl_rtld_libname+16&gt;:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x7fdc9baf5050 &lt;max_dirnamelen&gt;:	0x000000000000001a	0x0000000000000000</span><br></pre></td></tr></table></figure>
 
+
+
 <p>读取该地址上面的内容可以泄露出程序基地址，该地址为主程序加载 ld 文件时存储 ld 文件名的地址</p>
+
 <p><code>_dl_rtld_libname</code>和 libc 基地址的偏移是不固定的，不同的 ld 文件有不同的偏移，需要手测或者爆破</p>
+
 <p>程序基地址为<code>0x55e4fceaf238 - 0x238 == 0x55e4fceaf000</code></p>
+
 <p>这个地址的偏移一般离程序基地址来说始终是 0x238</p>
+
 <h2 id="通过-stdin-stdout-stderr"><a href="#通过-stdin-stdout-stderr" class="headerlink" title="通过 stdin stdout stderr"></a>通过 stdin stdout stderr</h2><p>这里我只测了 stdin，就拿它来说吧</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; stack 50</span><br><span class="line">00:0000│ rsp  0x7fbe027a4fb0 → 0x55f001f75020 → 0x7fbe027a5a00 (_IO_2_1_stdin_) ← 0xfbad208b</span><br><span class="line">01:0008│      0x7fbe027a4fb8 → 0x7fbe027a5408 (__check_rhosts_file) ← 0x1</span><br><span class="line">02:0010│      0x7fbe027a4fc0 → 0x7fbe027a5340 (opterr) ← 0x100000001</span><br><span class="line">03:0018│      0x7fbe027a4fc8 → 0x7fbe027a56e0 (__ctype32_toupper) → 0x7fbe025583c0 (_nl_C_LC_CTYPE_toupper+512) ← add    byte ptr [rax], al</span><br><span class="line">04:0020│      0x7fbe027a4fd0 → 0x7fbe027a5c28 (__realloc_hook) ← 0x0</span><br><span class="line">05:0028│      0x7fbe027a4fd8 → 0x7fbe02c19740 (_dl_argv) → 0x7ffdf6dc47a8 → 0x7ffdf6dc628c ← 0x4c00706172632f2e /* <span class="string">'./crap'</span> */</span><br><span class="line">06:0030│      0x7fbe027a4fe0 → 0x7fbe027aaa20 (rpc_createerr) ← 0x0</span><br><span class="line">07:0038│      0x7fbe027a4fe8 ← 0xffffffffffffff78</span><br><span class="line">08:0040│      0x7fbe027a4ff0 ← 0x0</span><br><span class="line">... ↓</span><br><span class="line">14a:0a50│ rbx r14  0x7fbe027a5a00 (_IO_2_1_stdin_) ← 0xfbad208b</span><br></pre></td></tr></table></figure>
 
+
+
 <p>可以看到 0x7f8a3b926fb0 地址处存着 bss 端上对应的 stdin 的地址</p>
+
 <p>这个地址的权限是可读，用 vmmap 可以查到：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x7fbe023ba000     0x7fbe025a1000 r-xp   1e7000 0      /lib/x86_64-linux-gnu/libc-2.27.so</span><br><span class="line">0x7fbe025a1000     0x7fbe027a1000 ---p   200000 1e7000 /lib/x86_64-linux-gnu/libc-2.27.so</span><br><span class="line">0x7fbe027a1000     0x7fbe027a5000 r--p     4000 1e7000 /lib/x86_64-linux-gnu/libc-2.27.so</span><br></pre></td></tr></table></figure>
 
+
+
 <p>而<code>_IO_2_1_stdin_</code>的地址里这个存着 stdin 地址的地址的距离大约是 0xa50</p>
+
 <p>可以从 0xa00 开始爆破，多尝试几次应该就能出来</p>
+
 <p>stdout stderr 同理</p>
+
 <h1 id="执行任意地址"><a href="#执行任意地址" class="headerlink" title="执行任意地址"></a>执行任意地址</h1><p>若程序有类似这样的功能：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> buf[<span class="number">10</span>]; <span class="comment">// [rsp+20h] [rbp-30h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v5; <span class="comment">// [rsp+48h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v5 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  write(<span class="number">1u</span>, <span class="string">"addr:"</span>, <span class="number">5u</span>LL);</span><br><span class="line">  read(<span class="number">0</span>, buf, <span class="number">0xC8</span>uLL);</span><br><span class="line">  write(<span class="number">1u</span>, <span class="string">"data:"</span>, <span class="number">5u</span>LL);</span><br><span class="line">  read(<span class="number">0</span>, buf[<span class="number">0</span>], <span class="number">0x18</span>uLL);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="修改-fini-array"><a href="#修改-fini-array" class="headerlink" title="修改 .fini_array"></a>修改 .fini_array</h2><p>可以修改<code>.fini_array</code>的值为任意地址，不过<code>.fini_array</code>只能用一次</p>
+
 <h2 id="修改-libc-atexit"><a href="#修改-libc-atexit" class="headerlink" title="修改 __libc_atexit"></a>修改 __libc_atexit</h2><p>调用方法：</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elf.sym[<span class="string">'__elf_set___libc_atexit_element__IO_cleanup__'</span>]</span><br></pre></td></tr></table></figure>
 
+
+
 <p>程序是静态编译的时候，可以修改<code>__libc_atexit</code>来实现任意地址跳转</p>
+
 <p>这个可以无限次使用，在 ida 里也能找到它</p>
+
 <h2 id="利用-dl-fini-执行函数"><a href="#利用-dl-fini-执行函数" class="headerlink" title="利用 _dl_fini 执行函数"></a>利用 _dl_fini 执行函数</h2><p>具体的利用在 exit 函数的<code>_dl_fini</code>函数里：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0x7f22d9fdca02 &lt;_dl_fini+98&gt;     lea    rdi, [rip + 0x217f5f] &lt;0x7f22da1f4968&gt;</span><br><span class="line">0x7f22d9fdca09 &lt;_dl_fini+105&gt;    call   qword ptr [rip + 0x218551] &lt;0x7f22d9c2a440&gt;</span><br><span class="line">     rdi: 0x7f22da1f4968 (_rtld_global+2312) ← 0x68732f6e69622f /* <span class="string">'/bin/sh'</span> */</span><br><span class="line">     rsi: 0x0</span><br><span class="line">     rdx: 0x7f22d9fdc9a0 (_dl_fini) ← push   rbp</span><br><span class="line">     rcx: 0x1</span><br></pre></td></tr></table></figure>
 
+
+
 <p><code>call qword ptr [rip + 0x218551]</code>是<code>_rtld_global</code>上面的地址，rdi 也是用的<code>_rtld_global</code>上面的地址</p>
+
 <p>不同的 ld 对应的<code>_rtld_global</code>不一样，需要手调爆破</p>
+
 <h2 id="修改-stack-chk-fail-内部函数的-got-plt-表"><a href="#修改-stack-chk-fail-内部函数的-got-plt-表" class="headerlink" title="修改 _stack_chk_fail 内部函数的 .got.plt 表"></a>修改 _stack_chk_fail 内部函数的 .got.plt 表</h2><h3 id="libc-message-函数"><a href="#libc-message-函数" class="headerlink" title="__libc_message 函数"></a>__libc_message 函数</h3><p>该函数内部函数按调用顺序排列如下：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">strchrnul 函数</span><br><span class="line">mempcpy 函数</span><br><span class="line">strlen_ifunc 函数</span><br></pre></td></tr></table></figure>
 
+
+
 <p>got 表内有可改函数就可以改为 main 函数的地址来进行无限循环</p>
+
 <h1 id="制造栈迁移"><a href="#制造栈迁移" class="headerlink" title="制造栈迁移"></a>制造栈迁移</h1><h2 id="修改-fini-array-为-leave-ret"><a href="#修改-fini-array-为-leave-ret" class="headerlink" title="修改 .fini_array 为 leave ; ret"></a>修改 .fini_array 为 leave ; ret</h2><p>这个方法可以使程序跳转到可写地址，达到栈迁移的作用</p>
+
 <p>具体实现如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">addr_fini_array + 0x18 --&gt; addr_fini_array + 0x18</span><br><span class="line">...</span><br><span class="line">在 addr_fini_array + 0x20 及之后填充完整的 rop 链</span><br><span class="line">...</span><br><span class="line">addr_fini_array - 0x10 --&gt; addr_fini_array + 0x10</span><br><span class="line">addr_fini_array - 0x08 --&gt; addr_fini_array + 0x18</span><br><span class="line">addr_fini_array - 0x00 --&gt; rop_leave_ret</span><br><span class="line">返回地址 --&gt; addr___libc_start_main_1072[不定，这就是正常程序在主函数 ret 结束时所到达的 __libc_start_main 地址]</span><br></pre></td></tr></table></figure>
 
+
+
 <p>之后栈就会被转移到<code>addr_fini_array + 0x20</code></p>
+
 <h2 id="利用-setcontext"><a href="#利用-setcontext" class="headerlink" title="利用 setcontext"></a>利用 setcontext</h2><p>这个函数载 libc 里，函数内部汇编利用点如下：</p>
+
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0000000000052070</span> &lt;setcontext@@GLIBC_2<span class="meta">.2</span><span class="meta">.5</span>&gt;:</span><br><span class="line">   <span class="number">52070</span>:	<span class="number">57</span>                   	<span class="keyword">push</span>   <span class="built_in">rdi</span></span><br><span class="line">   <span class="number">52071</span>:	<span class="number">48</span> <span class="number">8d</span> b7 <span class="number">28</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">lea</span>    <span class="built_in">rsi</span>,[<span class="built_in">rdi</span>+<span class="number">0x128</span>]</span><br><span class="line">   <span class="number">52078</span>:	<span class="number">31</span> d2                	<span class="keyword">xor</span>    <span class="built_in">edx</span>,<span class="built_in">edx</span></span><br><span class="line">   5207a:	bf <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">mov</span>    <span class="built_in">edi</span>,<span class="number">0x2</span></span><br><span class="line">   5207f:	<span class="number">41</span> ba <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>    	<span class="keyword">mov</span>    <span class="built_in">r10d</span>,<span class="number">0x8</span></span><br><span class="line">   <span class="number">52085</span>:	b8 0e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">mov</span>    <span class="built_in">eax</span>,<span class="number">0xe</span></span><br><span class="line">   5208a:	0f <span class="number">05</span>                	<span class="keyword">syscall</span> </span><br><span class="line">   5208c:	5f                   	<span class="keyword">pop</span>    <span class="built_in">rdi</span></span><br><span class="line">   <span class="number">5208d</span>:	<span class="number">48</span> <span class="number">3d</span> <span class="number">01</span> f0 ff ff    	<span class="keyword">cmp</span>    <span class="built_in">rax</span>,<span class="number">0xfffffffffffff001</span></span><br><span class="line">   <span class="number">52093</span>:	<span class="number">73</span> 5b                	<span class="keyword">jae</span>    520f0 &lt;setcontext@@GLIBC_2<span class="meta">.2</span><span class="meta">.5</span>+<span class="number">0x80</span>&gt;</span><br><span class="line">   <span class="number">52095</span>:	<span class="number">48</span> 8b 8f e0 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0xe0</span>]</span><br><span class="line">   5209c:	d9 <span class="number">21</span>                	<span class="keyword">fldenv</span> [<span class="built_in">rcx</span>]</span><br><span class="line">   5209e:	0f ae <span class="number">97</span> c0 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">ldmxcsr</span> <span class="built_in">DWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x1c0</span>]</span><br><span class="line">   520a5:	<span class="number">48</span> 8b a7 a0 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rsp</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0xa0</span>]</span><br><span class="line">   520ac:	<span class="number">48</span> 8b 9f <span class="number">80</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rbx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x80</span>]</span><br><span class="line">   520b3:	<span class="number">48</span> 8b 6f <span class="number">78</span>          	<span class="keyword">mov</span>    <span class="built_in">rbp</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x78</span>]</span><br><span class="line">   520b7:	4c 8b <span class="number">67</span> <span class="number">48</span>          	<span class="keyword">mov</span>    <span class="built_in">r12</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x48</span>]</span><br><span class="line">   520bb:	4c 8b 6f <span class="number">50</span>          	<span class="keyword">mov</span>    <span class="built_in">r13</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x50</span>]</span><br><span class="line">   520bf:	4c 8b <span class="number">77</span> <span class="number">58</span>          	<span class="keyword">mov</span>    <span class="built_in">r14</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x58</span>]</span><br><span class="line">   520c3:	4c 8b 7f <span class="number">60</span>          	<span class="keyword">mov</span>    <span class="built_in">r15</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x60</span>]</span><br><span class="line">   520c7:	<span class="number">48</span> 8b 8f a8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0xa8</span>]</span><br><span class="line">   520ce:	<span class="number">51</span>                   	<span class="keyword">push</span>   <span class="built_in">rcx</span></span><br><span class="line">   520cf:	<span class="number">48</span> 8b <span class="number">77</span> <span class="number">70</span>          	<span class="keyword">mov</span>    <span class="built_in">rsi</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x70</span>]</span><br><span class="line">   520d3:	<span class="number">48</span> 8b <span class="number">97</span> <span class="number">88</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rdx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x88</span>]</span><br><span class="line">   520da:	<span class="number">48</span> 8b 8f <span class="number">98</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x98</span>]</span><br><span class="line">   520e1:	4c 8b <span class="number">47</span> <span class="number">28</span>          	<span class="keyword">mov</span>    <span class="built_in">r8</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x28</span>]</span><br><span class="line">   520e5:	4c 8b 4f <span class="number">30</span>          	<span class="keyword">mov</span>    <span class="built_in">r9</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x30</span>]</span><br><span class="line">   520e9:	<span class="number">48</span> 8b 7f <span class="number">68</span>          	<span class="keyword">mov</span>    <span class="built_in">rdi</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdi</span>+<span class="number">0x68</span>]</span><br><span class="line">   520ed:	<span class="number">31</span> c0                	<span class="keyword">xor</span>    <span class="built_in">eax</span>,<span class="built_in">eax</span></span><br><span class="line">   520ef:	c3                   	<span class="keyword">ret</span></span><br><span class="line">   520f0:	<span class="number">48</span> 8b <span class="number">0d</span> <span class="number">71</span> <span class="number">8d</span> <span class="number">39</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rip</span>+<span class="number">0x398d71</span>]        # 3eae68 &lt;h_errlist@@GLIBC_2<span class="meta">.2</span><span class="meta">.5</span>+<span class="number">0xdc8</span>&gt;</span><br><span class="line">   520f7:	f7 d8                	<span class="keyword">neg</span>    <span class="built_in">eax</span></span><br><span class="line">   520f9:	<span class="number">64</span> <span class="number">89</span> <span class="number">01</span>             	<span class="keyword">mov</span>    <span class="built_in">DWORD</span> <span class="built_in">PTR</span> <span class="built_in">fs</span>:[<span class="built_in">rcx</span>],<span class="built_in">eax</span></span><br><span class="line">   520fc:	<span class="number">48</span> <span class="number">83</span> c8 ff          	<span class="keyword">or</span>     <span class="built_in">rax</span>,<span class="number">0xffffffffffffffff</span></span><br><span class="line">   <span class="number">52100</span>:	c3                   	<span class="keyword">ret</span></span><br><span class="line">   <span class="number">52101</span>:	<span class="number">66</span> 2e 0f 1f <span class="number">84</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">nop</span>    <span class="built_in">WORD</span> <span class="built_in">PTR</span> <span class="built_in">cs</span>:[<span class="built_in">rax</span>+<span class="built_in">rax</span>*<span class="number">1</span>+<span class="number">0x0</span>]</span><br><span class="line">   <span class="number">52108</span>:	<span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line">   5210b:	0f 1f <span class="number">44</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">nop</span>    <span class="built_in">DWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rax</span>+<span class="built_in">rax</span>*<span class="number">1</span>+<span class="number">0x0</span>]</span><br></pre></td></tr></table></figure>
 
+
+
 <p>该样例来自于<code>libc6_2.27-3ubuntu1_amd64.so</code>，可以看到在<code>setcontext+0x35</code>处可以修改 rsp 的值</p>
+
 <p>底下也可以修改基本所有可以用到的寄存器，不过这个传参方式是 rdi，不同的 libc 库的传参寄存器可能不同</p>
+
 <p>下面的例子来自于<code>libc6_2.31-0ubuntu6_amd64.so</code>，传参方式是 rdx</p>
+
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">0000000000045b70 &lt;setcontext&gt;:</span><br><span class="line">   45b70:	<span class="number">57</span>                   	<span class="keyword">push</span>   <span class="built_in">rdi</span></span><br><span class="line">   45b71:	<span class="number">48</span> <span class="number">8d</span> b7 <span class="number">28</span> <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">lea</span>    <span class="built_in">rsi</span>,[<span class="built_in">rdi</span>+<span class="number">0x128</span>]</span><br><span class="line">   45b78:	<span class="number">31</span> d2                	<span class="keyword">xor</span>    <span class="built_in">edx</span>,<span class="built_in">edx</span></span><br><span class="line">   45b7a:	bf <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">mov</span>    <span class="built_in">edi</span>,<span class="number">0x2</span></span><br><span class="line">   45b7f:	<span class="number">41</span> ba <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>    	<span class="keyword">mov</span>    <span class="built_in">r10d</span>,<span class="number">0x8</span></span><br><span class="line">   45b85:	b8 0e <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">mov</span>    <span class="built_in">eax</span>,<span class="number">0xe</span></span><br><span class="line">   45b8a:	0f <span class="number">05</span>                	<span class="keyword">syscall</span> </span><br><span class="line">   45b8c:	5a                   	<span class="keyword">pop</span>    <span class="built_in">rdx</span></span><br><span class="line">   45b8d:	<span class="number">48</span> <span class="number">3d</span> <span class="number">01</span> f0 ff ff    	<span class="keyword">cmp</span>    <span class="built_in">rax</span>,<span class="number">0xfffffffffffff001</span></span><br><span class="line">   45b93:	<span class="number">73</span> 5b                	<span class="keyword">jae</span>    45bf0 &lt;setcontext+<span class="number">0x80</span>&gt;</span><br><span class="line">   45b95:	<span class="number">48</span> 8b 8a e0 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0xe0</span>]</span><br><span class="line">   45b9c:	d9 <span class="number">21</span>                	<span class="keyword">fldenv</span> [<span class="built_in">rcx</span>]</span><br><span class="line">   45b9e:	0f ae <span class="number">92</span> c0 <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">ldmxcsr</span> <span class="built_in">DWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x1c0</span>]</span><br><span class="line">   45ba5:	<span class="number">48</span> 8b a2 a0 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rsp</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0xa0</span>]</span><br><span class="line">   45bac:	<span class="number">48</span> 8b 9a <span class="number">80</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rbx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x80</span>]</span><br><span class="line">   45bb3:	<span class="number">48</span> 8b 6a <span class="number">78</span>          	<span class="keyword">mov</span>    <span class="built_in">rbp</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x78</span>]</span><br><span class="line">   45bb7:	4c 8b <span class="number">62</span> <span class="number">48</span>          	<span class="keyword">mov</span>    <span class="built_in">r12</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x48</span>]</span><br><span class="line">   45bbb:	4c 8b 6a <span class="number">50</span>          	<span class="keyword">mov</span>    <span class="built_in">r13</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x50</span>]</span><br><span class="line">   45bbf:	4c 8b <span class="number">72</span> <span class="number">58</span>          	<span class="keyword">mov</span>    <span class="built_in">r14</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x58</span>]</span><br><span class="line">   45bc3:	4c 8b 7a <span class="number">60</span>          	<span class="keyword">mov</span>    <span class="built_in">r15</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x60</span>]</span><br><span class="line">   45bc7:	<span class="number">48</span> 8b 8a a8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0xa8</span>]</span><br><span class="line">   45bce:	<span class="number">51</span>                   	<span class="keyword">push</span>   <span class="built_in">rcx</span></span><br><span class="line">   45bcf:	<span class="number">48</span> 8b <span class="number">72</span> <span class="number">70</span>          	<span class="keyword">mov</span>    <span class="built_in">rsi</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x70</span>]</span><br><span class="line">   45bd3:	<span class="number">48</span> 8b 7a <span class="number">68</span>          	<span class="keyword">mov</span>    <span class="built_in">rdi</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x68</span>]</span><br><span class="line">   45bd7:	<span class="number">48</span> 8b 8a <span class="number">98</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x98</span>]</span><br><span class="line">   45bde:	4c 8b <span class="number">42</span> <span class="number">28</span>          	<span class="keyword">mov</span>    <span class="built_in">r8</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x28</span>]</span><br><span class="line">   45be2:	4c 8b 4a <span class="number">30</span>          	<span class="keyword">mov</span>    <span class="built_in">r9</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x30</span>]</span><br><span class="line">   45be6:	<span class="number">48</span> 8b <span class="number">92</span> <span class="number">88</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rdx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0x88</span>]</span><br><span class="line">   45bed:	<span class="number">31</span> c0                	<span class="keyword">xor</span>    <span class="built_in">eax</span>,<span class="built_in">eax</span></span><br><span class="line">   45bef:	c3                   	<span class="keyword">ret</span>    </span><br><span class="line">   45bf0:	<span class="number">48</span> 8b <span class="number">0d</span> <span class="number">79</span> f2 <span class="number">36</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rip</span>+<span class="number">0x36f279</span>]        # 3b4e70 &lt;.got+<span class="number">0x110</span>&gt;</span><br><span class="line">   45bf7:	f7 d8                	<span class="keyword">neg</span>    <span class="built_in">eax</span></span><br><span class="line">   45bf9:	<span class="number">64</span> <span class="number">89</span> <span class="number">01</span>             	<span class="keyword">mov</span>    <span class="built_in">DWORD</span> <span class="built_in">PTR</span> <span class="built_in">fs</span>:[<span class="built_in">rcx</span>],<span class="built_in">eax</span></span><br><span class="line">   45bfc:	<span class="number">48</span> <span class="number">83</span> c8 ff          	<span class="keyword">or</span>     <span class="built_in">rax</span>,<span class="number">0xffffffffffffffff</span></span><br><span class="line">   45c00:	c3                   	<span class="keyword">ret</span></span><br><span class="line">   45c01:	<span class="number">66</span> 2e 0f 1f <span class="number">84</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">nop</span>    <span class="built_in">WORD</span> <span class="built_in">PTR</span> <span class="built_in">cs</span>:[<span class="built_in">rax</span>+<span class="built_in">rax</span>*<span class="number">1</span>+<span class="number">0x0</span>]</span><br><span class="line">   45c08:	<span class="number">00</span> <span class="number">00</span> <span class="number">00</span> </span><br><span class="line">   45c0b:	0f 1f <span class="number">44</span> <span class="number">00</span> <span class="number">00</span>       	<span class="keyword">nop</span>    <span class="built_in">DWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rax</span>+<span class="built_in">rax</span>*<span class="number">1</span>+<span class="number">0x0</span>]</span><br></pre></td></tr></table></figure>
 
+
+
 <p>主要利用的地址如下：</p>
+
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">45ba5:	<span class="number">48</span> 8b a2 a0 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rsp</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0xa0</span>]</span><br><span class="line">45bc7:	<span class="number">48</span> 8b 8a a8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 	<span class="keyword">mov</span>    <span class="built_in">rcx</span>,<span class="built_in">QWORD</span> <span class="built_in">PTR</span> [<span class="built_in">rdx</span>+<span class="number">0xa8</span>]</span><br><span class="line">45bce:	<span class="number">51</span>                   	<span class="keyword">push</span>   <span class="built_in">rcx</span></span><br><span class="line">45c00:	c3                   	<span class="keyword">ret</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>利用方法，以上面<code>libc6-amd64_2.31-0ubuntu6_i386.so</code>为例：</p>
+
 <p>按如下方式构造即可完成栈迁移：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;地址 A:      可读写&gt;    &lt;地址 B:     目标地址&gt;</span><br><span class="line">QWORD PTR [rdx+0xa0]    &lt;地址 A:       可读写&gt;</span><br><span class="line">QWORD PTR [rdx+0xa8]    &lt;pop rsp ; ret 的地址&gt;</span><br></pre></td></tr></table></figure>
+
+
 
 <p>这样程序最终就会跳到<code>地址 B</code>执行代码</p>
 
+
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></p>
-        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="old_blog_01//" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2020-04-15, 11:22:00</p>
+
         <p><span>最后更新:</span>2020-04-15, 15:59:38</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【Pwn 笔记】Glibc 利用中那些偏门的技巧">https://binlep.github.io/old_blog_01/2020/04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2020/04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="old_blog_01/http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../【Pwn 笔记】IO FILE 利用链汇总/">
+
                     【Pwn 笔记】IO FILE 利用链汇总（待补充）
+
                 </a>
+
             </div>
+
         
+
         
+
             <div id="article-nav-older" class="article-nav-title">
+
                 <a href="../../13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">
+
                     【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解
+
                 </a>
+
             </div>
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#泄露程序基址"><span class="toc-number">1.</span> <span class="toc-text">泄露程序基址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-dl-rtld-libname"><span class="toc-number">1.1.</span> <span class="toc-text">修改 _dl_rtld_libname</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通过-stdin-stdout-stderr"><span class="toc-number">1.2.</span> <span class="toc-text">通过 stdin stdout stderr</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#执行任意地址"><span class="toc-number">2.</span> <span class="toc-text">执行任意地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-fini-array"><span class="toc-number">2.1.</span> <span class="toc-text">修改 .fini_array</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-libc-atexit"><span class="toc-number">2.2.</span> <span class="toc-text">修改 __libc_atexit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用-dl-fini-执行函数"><span class="toc-number">2.3.</span> <span class="toc-text">利用 _dl_fini 执行函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-stack-chk-fail-内部函数的-got-plt-表"><span class="toc-number">2.4.</span> <span class="toc-text">修改 _stack_chk_fail 内部函数的 .got.plt 表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#libc-message-函数"><span class="toc-number">2.4.1.</span> <span class="toc-text">__libc_message 函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#制造栈迁移"><span class="toc-number">3.</span> <span class="toc-text">制造栈迁移</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-fini-array-为-leave-ret"><span class="toc-number">3.1.</span> <span class="toc-text">修改 .fini_array 为 leave ; ret</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用-setcontext"><span class="toc-number">3.2.</span> <span class="toc-text">利用 setcontext</span></a></li></ol></li></ol>
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】Glibc 利用中那些偏门的技巧　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】Glibc 利用中那些偏门的技巧　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -447,139 +888,282 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../【Pwn 笔记】IO FILE 利用链汇总/" title="上一篇: 【Pwn 笔记】IO FILE 利用链汇总（待补充）">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
+
             <a href="../../13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/" title="下一篇: 【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解">
+
                 <i class="fa fa-angle-right"></i>
+
             </a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../21/【WriteUp】UMDCTF  2020 -- Pwn 题解/">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
+                <a href="old_blog_01/http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="old_blog_01/https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/old_blog_01/js/main.js" src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="old_blog_01//js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script async src="old_blog_01/https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>

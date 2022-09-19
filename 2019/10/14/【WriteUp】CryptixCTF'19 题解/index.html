@@ -1,87 +1,174 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="被 RoarCTF 整自闭了以后到这场比赛放松了一下">
+
 <meta name="keywords" content="CryptixCTF,Event">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【WriteUp】CryptixCTF&#39;19 题解">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2019/10/14/【WriteUp】CryptixCTF'19 题解/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="被 RoarCTF 整自闭了以后到这场比赛放松了一下">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2019-10-28T11:11:17.353Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【WriteUp】CryptixCTF&#39;19 题解">
+
 <meta name="twitter:description" content="被 RoarCTF 整自闭了以后到这场比赛放松了一下">
 
-<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
-
-
-
-    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+<link rel="apple-touch-icon" href="old_blog_01//apple-touch-icon.png">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+    <link rel="alternate" href="old_blog_01//atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
-    <script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="old_blog_01//favicon.png">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
-<link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【WriteUp】CryptixCTF&#39;19 题解 | binLep&#39;s Blog</title>
 
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
 
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,452 +179,905 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/old_blog_01/" class="profilepic">
-            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+        <a href="old_blog_01//" class="profilepic">
+
+            <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="old_blog_01//">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/old_blog_01/" class="profilepic">
-                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+            <a href="old_blog_01//" class="profilepic">
+
+                <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" target="_blank" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【WriteUp】CryptixCTF&#39;19 题解" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2019-10-14T08:49:00.000Z" itemprop="datePublished">2019-10-14</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【WriteUp】CryptixCTF&#39;19 题解
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/WriteUp/">WriteUp</a>
+
     </div>
+
+
+
 
 
         
+
     <div class="article-tag tagcloud">
+
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/Event/">Event</a></li></ul>
+
     </div>
+
+
 
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>被 RoarCTF 整自闭了以后到这场比赛放松了一下</p>
+
 <a id="more"></a>
 
+
+
 <h1 id="Finally…"><a href="#Finally…" class="headerlink" title="Finally…"></a>Finally…</h1><h2 id="Hidden-deep-within"><a href="#Hidden-deep-within" class="headerlink" title="Hidden deep within"></a>Hidden deep within</h2><h3 id="Description"><a href="#Description" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>“This is just noise… There is nothing….”<br><br>Is it?</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p>LSB 隐写题，第一次用 StegSolve 将得到的十六进制值保存为 bin 形式<br>第二次直接就能看到 flag</p>
+
 <hr>
+
 <h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;st3g4n0gr4phy_i5_34sy&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Pure-Magic"><a href="#Pure-Magic" class="headerlink" title="Pure Magic"></a>Pure Magic</h2><h3 id="Description-1"><a href="#Description-1" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>Like all fairy tails, you need a passphrase to pass through the cave and get the flag!<br><br><a href="https://cryptixctf.com/web3" target="_blank" rel="noopener">https://cryptixctf.com/web3</a><br><br><strong>NOTE:</strong> The flag format is flag{XXXXX} as usual.</p>
+
+<p>Like all fairy tails, you need a passphrase to pass through the cave and get the flag!<br><br><a href="old_blog_01/https://cryptixctf.com/web3" target="_blank" rel="noopener">https://cryptixctf.com/web3</a><br><br><strong>NOTE:</strong> The flag format is flag{XXXXX} as usual.</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution:"></a>Solution:</h3><p>打开只有一个密码框，随便输入点什么会返回字符串</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Please just stop guessing.</span><br></pre></td></tr></table></figure>
 
+
+
 <p>写日常的注入字符串<code>1&#39;or&#39;1&#39;=&#39;1</code>，得到这样一段返回文</p>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">You thought it would be that easy?! Hahaha. There is no flag.</span><br><span class="line">But since you have passed the phrase check, here is the query</span><br><span class="line">SELECT * FROM data where password=&apos;XXXXX&apos; :)</span><br></pre></td></tr></table></figure>
 
+
+
 <p>无</p>
+
 <hr>
+
 <h3 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Crack-it"><a href="#Crack-it" class="headerlink" title="Crack it"></a>Crack it</h2><h3 id="Description-2"><a href="#Description-2" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Some weird kind of key checking is going on for the flag.<br>See if you can get the right key!</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution:"></a>Solution:</h3><p>无</p>
+
 <hr>
+
 <h3 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无</span><br></pre></td></tr></table></figure>
 
+
+
 <h1 id="Welcome-to-the-real-deal"><a href="#Welcome-to-the-real-deal" class="headerlink" title="Welcome to the real deal"></a>Welcome to the real deal</h1><h2 id="Hash-Hash-Hash"><a href="#Hash-Hash-Hash" class="headerlink" title="Hash Hash Hash"></a>Hash Hash Hash</h2><h3 id="Description-3"><a href="#Description-3" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Recently, n00b learned about <strong>Hashing.</strong><br>But, he finds nothing special in it. So he decides to make a Hashing algorithm himself.<br>Now he is boasting about it. He is so confident that he even provided the algorithm and challenges everyone to crack it.<br>Put him back onto the ground</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution:"></a>Solution:</h3><p>无</p>
+
 <hr>
+
 <h3 id="Flag-3"><a href="#Flag-3" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Let’s-climb-the-ladder"><a href="#Let’s-climb-the-ladder" class="headerlink" title="Let’s climb the ladder"></a>Let’s climb the ladder</h2><h3 id="Description-4"><a href="#Description-4" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Here is an executable. You know what to do.<br><br><strong>Note:</strong> The flag format is as usual flag{XXXX…}</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-4"><a href="#Solution-4" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序关键点</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">__int64 __<span class="function">fastcall <span class="title">check</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)<span class="built_in">strlen</span>(a1) != <span class="number">21</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">7</span>] != a1[<span class="number">16</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">1</span>] != a1[<span class="number">11</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">2</span>] != a1[<span class="number">8</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">8</span>] != a1[<span class="number">18</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">3</span>] != a1[<span class="number">17</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">5</span>] != a1[<span class="number">20</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">9</span>] != a1[<span class="number">10</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">12</span>] != a1[<span class="number">19</span>] )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( *a1 != <span class="number">114</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">2</span>] - a1[<span class="number">1</span>] != <span class="number">1</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">10</span>] - a1[<span class="number">8</span>] != <span class="number">1</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">2</span>] != <span class="number">52</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">3</span>] + *a1 != <span class="number">214</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">4</span>] - a1[<span class="number">3</span>] != <span class="number">5</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">5</span>] + a1[<span class="number">6</span>] != <span class="number">213</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">5</span>] - a1[<span class="number">6</span>] != <span class="number">7</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">7</span>] - a1[<span class="number">8</span>] != <span class="number">43</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">12</span>] + a1[<span class="number">13</span>] != <span class="number">207</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">12</span>] * a1[<span class="number">13</span>] != <span class="number">10682</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">15</span>] - a1[<span class="number">14</span>] != <span class="number">13</span> )</span><br><span class="line">    <span class="keyword">return</span> fail();</span><br><span class="line">  <span class="keyword">if</span> ( a1[<span class="number">15</span>] - *a1 == <span class="number">7</span> )</span><br><span class="line">    <span class="keyword">return</span> success();</span><br><span class="line">  <span class="keyword">return</span> fail();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>对着写个python就完了</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">res = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">21</span>):</span><br><span class="line">    res.append(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">res[<span class="number">0</span>] = <span class="number">114</span></span><br><span class="line">res[<span class="number">2</span>] = <span class="number">52</span></span><br><span class="line">res[<span class="number">1</span>] = res[<span class="number">2</span>] - <span class="number">1</span></span><br><span class="line">res[<span class="number">5</span>] = <span class="number">110</span></span><br><span class="line">res[<span class="number">6</span>] = <span class="number">103</span></span><br><span class="line">res[<span class="number">12</span>] = <span class="number">109</span></span><br><span class="line">res[<span class="number">13</span>] = <span class="number">98</span></span><br><span class="line">res[<span class="number">20</span>] = res[<span class="number">5</span>]</span><br><span class="line">res[<span class="number">15</span>] = res[<span class="number">0</span>] + <span class="number">7</span></span><br><span class="line">res[<span class="number">19</span>] = res[<span class="number">12</span>]</span><br><span class="line">res[<span class="number">11</span>] = res[<span class="number">1</span>]</span><br><span class="line">res[<span class="number">8</span>] = res[<span class="number">2</span>]</span><br><span class="line">res[<span class="number">7</span>] = res[<span class="number">8</span>] + <span class="number">43</span></span><br><span class="line">res[<span class="number">18</span>] = res[<span class="number">8</span>]</span><br><span class="line">res[<span class="number">10</span>] = res[<span class="number">8</span>] + <span class="number">1</span></span><br><span class="line">res[<span class="number">3</span>] = <span class="number">214</span> - res[<span class="number">0</span>]</span><br><span class="line">res[<span class="number">17</span>] = res[<span class="number">3</span>]</span><br><span class="line">res[<span class="number">14</span>] = res[<span class="number">15</span>] - <span class="number">13</span></span><br><span class="line">res[<span class="number">4</span>] = res[<span class="number">3</span>] + <span class="number">5</span></span><br><span class="line">res[<span class="number">16</span>] = res[<span class="number">7</span>]</span><br><span class="line">res[<span class="number">9</span>] = res[<span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">21</span>):</span><br><span class="line">    res[i] = chr(res[i])</span><br><span class="line"><span class="keyword">print</span> <span class="string">''</span>.join(res)</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-4"><a href="#Flag-4" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;r34ding_4553mbly_d4mn&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Your-ID-please"><a href="#Your-ID-please" class="headerlink" title="Your ID please"></a>Your ID please</h2><h3 id="Description-5"><a href="#Description-5" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>This is super secure, confidential research. You are just not meant to access it. Don’t even try, it’s futile.<br>Okay, you don’t believe me? have the source code too!<br><a href="https://cryptixctf.com/web4/php_code.txt" target="_blank" rel="noopener">https://cryptixctf.com/web4/php_code.txt</a><br><br><a href="https://cryptixctf.com/web4" target="_blank" rel="noopener">https://cryptixctf.com/web4</a></p>
+
+<p>This is super secure, confidential research. You are just not meant to access it. Don’t even try, it’s futile.<br>Okay, you don’t believe me? have the source code too!<br><a href="old_blog_01/https://cryptixctf.com/web4/php_code.txt" target="_blank" rel="noopener">https://cryptixctf.com/web4/php_code.txt</a><br><br><a href="old_blog_01/https://cryptixctf.com/web4" target="_blank" rel="noopener">https://cryptixctf.com/web4</a></p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-5"><a href="#Solution-5" class="headerlink" title="Solution:"></a>Solution:</h3><p>这里是源码</p>
+
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include_once</span> <span class="string">'flag.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_SERVER[<span class="string">"REQUEST_METHOD"</span>] == <span class="string">"POST"</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">"ID"</span>])&amp;&amp;<span class="keyword">isset</span>($_POST[<span class="string">"pwd"</span>]))&#123;</span><br><span class="line">        <span class="keyword">if</span>(strcmp($secretpassphrase, $_POST[<span class="string">"pwd"</span>]) == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"Hey, you are in!  "</span> . $_POST[<span class="string">"ID"</span>]  . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">            <span class="keyword">if</span>($_POST[<span class="string">"ID"</span>] == <span class="string">"SuperUser1337"</span>)&#123;</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">"Your Flag: "</span> . $flag;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"&lt;script type='text/javascript'&gt;alert('Unable to Login');&lt;/script&gt;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>传参方式是 POST，ID 变量的值需要是 SuperUser1337<br>pwd 的值不能等于变量 secretpassphrase 的值</p>
+
 <p>毕竟是题目，所以猜测 secretpassphrase 可以匹配所有字符串<br>这样我们使 pwd 的变量类型改成数组就永远也不会和字符串相等了<br>POST 如下数据即可</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ID=SuperUser1337&amp;<span class="built_in">pwd</span>[]=</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-5"><a href="#Flag-5" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Why_Juggl3_th3_Typ5&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h1 id="Still-Manageable"><a href="#Still-Manageable" class="headerlink" title="Still Manageable"></a>Still Manageable</h1><h2 id="The-Spy"><a href="#The-Spy" class="headerlink" title="The Spy"></a>The Spy</h2><h3 id="Description-6"><a href="#Description-6" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>You have been eavesdropping a conversation between two suspects who may know something about the flag. The conversation goes like this:<br><br><strong><em>HackCrypt1337:</em></strong> Do you know, primes are great way to hide secrets!<br><br><strong><em>n00b1001:</em></strong> Whatt..? primes? I don’t believe you<br><br><strong><em>HackCrypt1337:</em></strong> You are being too loud!, remember this number, 3073416132828889709313918053975078361304902307, it will be useful to understand the flag. and one more is……<br>Oh no! Someone is here, you can guess other one yourself. It is trivial anyways.<br>Here, keep this number safe with you!<br>1217323181436745647195685030986548015017805440<br><br>And they leave….<br><br>Get the flag!</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-6"><a href="#Solution-6" class="headerlink" title="Solution:"></a>Solution:</h3><p>RSA 题，写个脚本就行</p>
+
 <p><strong>exp如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line">p = gmpy2.mpz(<span class="number">13558774610046711780701</span>)</span><br><span class="line">q = gmpy2.mpz(<span class="number">226673591177742970257407</span>)</span><br><span class="line">n = gmpy2.mpz(<span class="number">3073416132828889709313918053975078361304902307</span>)</span><br><span class="line">e = gmpy2.mpz(<span class="number">65537</span>)</span><br><span class="line">phi_n = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">d = gmpy2.mpz(gmpy2.invert(e, phi_n))  <span class="comment"># 求逆元</span></span><br><span class="line">c = gmpy2.mpz(<span class="number">1217323181436745647195685030986548015017805440</span>)</span><br><span class="line">m = pow(c, d, n)</span><br><span class="line">m_hex = hex(m)[<span class="number">2</span>:]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"ascii:\n%s"</span>%(binascii.a2b_hex(m_hex).decode(<span class="string">"utf8"</span>))</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-6"><a href="#Flag-6" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;w3ak_R5A_bad&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Weird-machine"><a href="#Weird-machine" class="headerlink" title="Weird machine"></a>Weird machine</h2><h3 id="Description-7"><a href="#Description-7" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Recently, H4c3R1337 came across a weird machine, which keeps spitting 0 or 1. He wrote down the complete sequence in a file<br><br>He decided to find out what it means, but could barely manage to recover an incomplete python script from the machine.<br>Help him to find out</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-7"><a href="#Solution-7" class="headerlink" title="Solution:"></a>Solution:</h3><p>这题给我坑惨了，才知道 Python2 和 Python3 在随机数的选取上是不一样的</p>
+
 <p>一开始 py2 脚本写好了以后试了好多遍都不能爆破出来</p>
+
 <p>但是自己加密的密文能出来(因为也是在 py2 环境下加密的)</p>
+
 <p>之后换了 py3 尝试，一下就出来了</p>
+
 <p><strong>exp如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This problem needs Python3</span></span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">str_sed = <span class="string">'000010010101110100011000010100110011110101100010011000000001111100110101'</span>\</span><br><span class="line">          <span class="string">'011000110101010100110100010010110101101001010101001101100110110000111100'</span>\</span><br><span class="line">          <span class="string">'011000010001111000001011000011010000100000000001010101100011100000100101'</span></span><br><span class="line">list_sed = []</span><br><span class="line">alphanum = string.ascii_letters + string.digits</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(str_sed), <span class="number">8</span>):</span><br><span class="line">    list_sed.append(int(<span class="string">'0b'</span> + str_sed[i: i + <span class="number">8</span>], <span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check</span><span class="params">(str_res)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> str_res:</span><br><span class="line">        <span class="keyword">if</span> ord(j) &lt; <span class="number">32</span> <span class="keyword">or</span> ord(j) &gt; <span class="number">127</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">brute_force</span><span class="params">(rand_seed)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> list_sed</span><br><span class="line">    <span class="keyword">global</span> alphanum</span><br><span class="line">    rand_string = <span class="string">''</span></span><br><span class="line">    message = <span class="string">''</span></span><br><span class="line">    random.seed(rand_seed)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(len(list_sed)):</span><br><span class="line">        rand_string += alphanum[random.randint(<span class="number">1</span>, <span class="number">1000</span>) % len(alphanum)]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(len(list_sed)):</span><br><span class="line">        message += chr(list_sed[j] ^ ord(rand_string[j]))</span><br><span class="line">    <span class="comment"># print('[\033[0;32m+\033[0m]num ' + str(rand_seed) + ' :' + message)</span></span><br><span class="line">    <span class="keyword">return</span> message</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10001</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        res = brute_force(i)</span><br><span class="line">        <span class="keyword">if</span> check(res):</span><br><span class="line">            print(<span class="string">'[\033[0;32m+\033[0m]flag is '</span> + res)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">        <span class="comment"># print('[\033[0;31m-\033[0m]There is something wrong')</span></span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-7"><a href="#Flag-7" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;R4nd0m_s33d_s4v3d_y0u&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h1 id="Moving-On"><a href="#Moving-On" class="headerlink" title="Moving On"></a>Moving On</h1><h2 id="Mixed-Up"><a href="#Mixed-Up" class="headerlink" title="Mixed Up"></a>Mixed Up</h2><h3 id="Description-8"><a href="#Description-8" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Here is a text file containing some information. Try to gain this information, hopefully you will find your flag.</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-8"><a href="#Solution-8" class="headerlink" title="Solution:"></a>Solution:</h3><p>直接去这解密，选择 static 模式</p>
-<p><a href="https://quipqiup.com/" target="_blank" rel="noopener">https://quipqiup.com/</a></p>
+
+<p><a href="old_blog_01/https://quipqiup.com/" target="_blank" rel="noopener">https://quipqiup.com/</a></p>
+
 <hr>
+
 <h3 id="Flag-8"><a href="#Flag-8" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;freqanalysisworkxzz&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Where-to-run-this"><a href="#Where-to-run-this" class="headerlink" title="Where to run this"></a>Where to run this</h2><h3 id="Description-9"><a href="#Description-9" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>Here is a <a href="https://drive.google.com/file/d/1a4MlpHtdTjY9h6-jK7h7oRnXHMApQ9Zd/view?usp=sharing" target="_blank" rel="noopener">zip file</a><br>We were wondering what it does….but colorful tiles are awesome!<br><br>Can you find the secret?<br><br><strong>Note:</strong> The flag is in usual format i.e. flag{XXXX…}</p>
+
+<p>Here is a <a href="old_blog_01/https://drive.google.com/file/d/1a4MlpHtdTjY9h6-jK7h7oRnXHMApQ9Zd/view?usp=sharing" target="_blank" rel="noopener">zip file</a><br>We were wondering what it does….but colorful tiles are awesome!<br><br>Can you find the secret?<br><br><strong>Note:</strong> The flag is in usual format i.e. flag{XXXX…}</p>
+
 </blockquote>
+
 <hr>
+
 <p>安卓逆向，主要代码，在<code>classes2.dex</code>里</p>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.password;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.support.v7.app.AppCompatActivity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AppComputActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">57</span>;</span><br><span class="line">    <span class="keyword">int</span> b = <span class="number">29</span>;</span><br><span class="line">    <span class="keyword">int</span>[] key = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">4817</span>, <span class="number">6356</span>, <span class="number">3107</span>, <span class="number">6014</span>, <span class="number">2993</span>, <span class="number">6584</span>, <span class="number">5444</span>, <span class="number">2195</span>, <span class="number">5444</span>, <span class="number">4817</span>, <span class="number">6527</span>, <span class="number">6014</span>, <span class="number">3050</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Access modifiers changed, original: 0000 */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">obf</span><span class="params">(String val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; val.length(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> ((<span class="keyword">this</span>.a * val.charAt(i)) + <span class="keyword">this</span>.b != <span class="keyword">this</span>.key[i]) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>写个脚本反着推就 ok</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line">key = [<span class="number">4817</span>, <span class="number">6356</span>, <span class="number">3107</span>, <span class="number">6014</span>, <span class="number">2993</span>, <span class="number">6584</span>, <span class="number">5444</span>, <span class="number">2195</span>, <span class="number">5444</span>, <span class="number">4817</span>, <span class="number">6527</span>, <span class="number">6014</span>, <span class="number">3050</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(key)):</span><br><span class="line">    print(chr((key[i] - <span class="number">29</span>) / <span class="number">57</span>), end=<span class="string">""</span>)</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-9"><a href="#Flag-9" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;To6i4s_&amp;_Tri5&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Infiltrate"><a href="#Infiltrate" class="headerlink" title="Infiltrate"></a>Infiltrate</h2><h3 id="Description-10"><a href="#Description-10" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>You need to have a username and password to log in. Yes! you need to have it!<br><br><a href="https://cryptixctf.com/web2" target="_blank" rel="noopener">https://cryptixctf.com/web2</a></p>
+
+<p>You need to have a username and password to log in. Yes! you need to have it!<br><br><a href="old_blog_01/https://cryptixctf.com/web2" target="_blank" rel="noopener">https://cryptixctf.com/web2</a></p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-9"><a href="#Solution-9" class="headerlink" title="Solution:"></a>Solution:</h3><p>简单的 sql 注入</p>
+
 <p>账号输入<code>1&#39;or&#39;1&#39;or&#39;1</code>，密码随意</p>
+
 <hr>
+
 <h3 id="Flag-10"><a href="#Flag-10" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;s1mpl3_5QL_1nj3cti0n&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h1 id="Make-yourself-comfortable"><a href="#Make-yourself-comfortable" class="headerlink" title="Make yourself comfortable"></a>Make yourself comfortable</h1><h2 id="Welcome-gift"><a href="#Welcome-gift" class="headerlink" title="Welcome gift"></a>Welcome gift</h2><h3 id="Description-11"><a href="#Description-11" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Now that you are here, and want some free points<br>Here is a gift, open it.<br><em>ZmxhZ3t3ZWxjb21lX3RvX2NyeXB0aXhDVEZfYmFzZTY0aXRpc30K</em></p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-10"><a href="#Solution-10" class="headerlink" title="Solution:"></a>Solution:</h3><p>base64 解密即可</p>
+
 <hr>
+
 <h3 id="Flag-11"><a href="#Flag-11" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;welcome_to_cryptixCTF_base64itis&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="You-made-it-here"><a href="#You-made-it-here" class="headerlink" title="You made it here!"></a>You made it here!</h2><h3 id="Description-12"><a href="#Description-12" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
-<p>Remember, you have to get the flag.<br><br><a href="https://cryptixctf.com/web1" target="_blank" rel="noopener">https://cryptixctf.com/web1</a></p>
+
+<p>Remember, you have to get the flag.<br><br><a href="old_blog_01/https://cryptixctf.com/web1" target="_blank" rel="noopener">https://cryptixctf.com/web1</a></p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-11"><a href="#Solution-11" class="headerlink" title="Solution:"></a>Solution:</h3><p>第一部分在网页源代码找到</p>
+
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Came for the flag? Bingo!</span></span><br><span class="line"><span class="comment">              first part: flag&#123;Pr3tty_ </span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>第二部分在<code>https://cryptixctf.com/web1/style.css</code>找到</p>
+
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* second part: b4s1c_ */</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>第三部分在<code>https://cryptixctf.com/web1/script.js</code>找到</p>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// last part: 5tuff&#125;</span></span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-12"><a href="#Flag-12" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;Pr3tty_b4s1c_5tuff&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Secret-Code"><a href="#Secret-Code" class="headerlink" title="Secret Code"></a>Secret Code</h2><h3 id="Description-13"><a href="#Description-13" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Here is a program which gives you flag only after giving the secret code.<br>Can you get the flag?</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-12"><a href="#Solution-12" class="headerlink" title="Solution:"></a>Solution:</h3><p>拖到 IDA 里，直接就能在 main 函数看到</p>
+
 <hr>
+
 <h3 id="Flag-13"><a href="#Flag-13" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;sTring5_To_tH3_R35cU3&#125;</span><br></pre></td></tr></table></figure>
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【WriteUp】CryptixCTF&#39;19 题解</a></p>
-        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="old_blog_01//" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2019-10-14, 08:49:00</p>
+
         <p><span>最后更新:</span>2019-10-28, 19:11:17</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【WriteUp】CryptixCTF&#39;19 题解">https://binlep.github.io/old_blog_01/2019/10/14/【WriteUp】CryptixCTF&#39;19 题解/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2019/10/14/【WriteUp】CryptixCTF&#39;19 题解/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="old_blog_01/http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../../15/【Pwn 笔记】堆利用总结/">
+
                     【Pwn 笔记】堆利用总结
+
                 </a>
+
             </div>
+
         
+
         
+
             <div id="article-nav-older" class="article-nav-title">
+
                 <a href="../../05/【WriteUp】攻防世界--Pwn题解(Part 1)/">
+
                     【WriteUp】攻防世界--Pwn题解(Part 1)
+
                 </a>
+
             </div>
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Finally…"><span class="toc-number">1.</span> <span class="toc-text">Finally…</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hidden-deep-within"><span class="toc-number">1.1.</span> <span class="toc-text">Hidden deep within</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description"><span class="toc-number">1.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution"><span class="toc-number">1.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag"><span class="toc-number">1.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pure-Magic"><span class="toc-number">1.2.</span> <span class="toc-text">Pure Magic</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crack-it"><span class="toc-number">1.3.</span> <span class="toc-text">Crack it</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Welcome-to-the-real-deal"><span class="toc-number">2.</span> <span class="toc-text">Welcome to the real deal</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash-Hash-Hash"><span class="toc-number">2.1.</span> <span class="toc-text">Hash Hash Hash</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-3"><span class="toc-number">2.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-3"><span class="toc-number">2.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-3"><span class="toc-number">2.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Let’s-climb-the-ladder"><span class="toc-number">2.2.</span> <span class="toc-text">Let’s climb the ladder</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-4"><span class="toc-number">2.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-4"><span class="toc-number">2.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-4"><span class="toc-number">2.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Your-ID-please"><span class="toc-number">2.3.</span> <span class="toc-text">Your ID please</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-5"><span class="toc-number">2.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-5"><span class="toc-number">2.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-5"><span class="toc-number">2.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Still-Manageable"><span class="toc-number">3.</span> <span class="toc-text">Still Manageable</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Spy"><span class="toc-number">3.1.</span> <span class="toc-text">The Spy</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-6"><span class="toc-number">3.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-6"><span class="toc-number">3.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-6"><span class="toc-number">3.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Weird-machine"><span class="toc-number">3.2.</span> <span class="toc-text">Weird machine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-7"><span class="toc-number">3.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-7"><span class="toc-number">3.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-7"><span class="toc-number">3.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Moving-On"><span class="toc-number">4.</span> <span class="toc-text">Moving On</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mixed-Up"><span class="toc-number">4.1.</span> <span class="toc-text">Mixed Up</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-8"><span class="toc-number">4.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-8"><span class="toc-number">4.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-8"><span class="toc-number">4.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-to-run-this"><span class="toc-number">4.2.</span> <span class="toc-text">Where to run this</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-9"><span class="toc-number">4.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-9"><span class="toc-number">4.2.2.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Infiltrate"><span class="toc-number">4.3.</span> <span class="toc-text">Infiltrate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-10"><span class="toc-number">4.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-9"><span class="toc-number">4.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-10"><span class="toc-number">4.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Make-yourself-comfortable"><span class="toc-number">5.</span> <span class="toc-text">Make yourself comfortable</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Welcome-gift"><span class="toc-number">5.1.</span> <span class="toc-text">Welcome gift</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-11"><span class="toc-number">5.1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-10"><span class="toc-number">5.1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-11"><span class="toc-number">5.1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#You-made-it-here"><span class="toc-number">5.2.</span> <span class="toc-text">You made it here!</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-12"><span class="toc-number">5.2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-11"><span class="toc-number">5.2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-12"><span class="toc-number">5.2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Secret-Code"><span class="toc-number">5.3.</span> <span class="toc-text">Secret Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-13"><span class="toc-number">5.3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-12"><span class="toc-number">5.3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-13"><span class="toc-number">5.3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol></li></ol>
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【WriteUp】CryptixCTF'19 题解　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【WriteUp】CryptixCTF'19 题解　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -546,139 +1086,282 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../../15/【Pwn 笔记】堆利用总结/" title="上一篇: 【Pwn 笔记】堆利用总结">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
+
             <a href="../../05/【WriteUp】攻防世界--Pwn题解(Part 1)/" title="下一篇: 【WriteUp】攻防世界--Pwn题解(Part 1)">
+
                 <i class="fa fa-angle-right"></i>
+
             </a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/15/【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
+                <a href="old_blog_01/http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="old_blog_01/https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/old_blog_01/js/main.js" src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="old_blog_01//js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script async src="old_blog_01/https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>

